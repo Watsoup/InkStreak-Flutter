@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/screens/auth/login_screen.dart';
-import 'package:inkstreak/presentation/screens/home/home_screen.dart';
-import 'package:inkstreak/presentation/screens/feed/feed_screen.dart';
+import 'package:inkstreak/presentation/screens/main/main_navigation_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 
 class AppRouter {
@@ -54,7 +52,15 @@ class AppRouter {
           name: 'home',
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
-            child: const HomeScreen(),
+            child: const MainNavigationScreen(initialPage: 0),
+          ),
+        ),
+        GoRoute(
+          path: '/upload',
+          name: 'upload',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const MainNavigationScreen(initialPage: 1),
           ),
         ),
         GoRoute(
@@ -62,7 +68,7 @@ class AppRouter {
           name: 'feed',
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
-            child: const FeedScreen(),
+            child: const MainNavigationScreen(initialPage: 2),
           ),
         ),
         GoRoute(

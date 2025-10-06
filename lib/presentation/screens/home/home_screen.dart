@@ -3,93 +3,136 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
-import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_state.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final bool isInPageView;
+
+  const HomeScreen({super.key, this.isInPageView = false});
 
   // Static theme for today (will be dynamic later)
   static const String todaysTheme = "Spooky Creatures";
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PostBloc()..add(const PostLoadRequested()),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () => context.go('/profile'),
-            ),
-          ],
-        ),
+    return Scaffold(
         drawer: _buildDrawer(context),
         body: BlocBuilder<PostBloc, PostState>(
           builder: (context, postState) {
             return CustomScrollView(
               slivers: [
-                // Today's Theme Section
-                SliverToBoxAdapter(
-                  child: Container(
-                    padding: const EdgeInsets.all(24.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Theme.of(context).colorScheme.primaryContainer,
-                          Theme.of(context).colorScheme.surface,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                // Collapsing SliverAppBar with Theme
+                SliverAppBar(
+                  expandedHeight: 220.0,
+                  floating: false,
+                  pinned: true,
+                  snap: false,
+                  leading: Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Today's theme is...",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Colors.grey[700],
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          todaysTheme,
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Drawing feature coming soon!'),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.create),
-                          label: const Text('Start Drawing'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.person),
+                      onPressed: () => context.go('/profile'),
+                    ),
+                  ],
+                  flexibleSpace: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      // Calculate collapse progress (0.0 = expanded, 1.0 = collapsed)
+                      final double top = constraints.biggest.height;
+                      final double collapsedHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
+                      final double expandedHeight = 220.0;
+                      final double shrinkOffset = expandedHeight - top;
+                      final double collapseProgress = (shrinkOffset / (expandedHeight - collapsedHeight)).clamp(0.0, 1.0);
+
+                      return FlexibleSpaceBar(
+                        centerTitle: true,
+                        title: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 100),
+                          opacity: collapseProgress > 0.5 ? 1.0 : 0.0,
+                          child: Text(
+                            HomeScreen.todaysTheme,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                        background: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primaryContainer,
+                                Theme.of(context).colorScheme.surface,
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: SafeArea(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 24.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AnimatedOpacity(
+                                    duration: const Duration(milliseconds: 200),
+                                    opacity: 1.0 - collapseProgress,
+                                    child: Text(
+                                      "Today's theme is...",
+                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                            color: Colors.grey[700],
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  AnimatedOpacity(
+                                    duration: const Duration(milliseconds: 200),
+                                    opacity: 1.0 - collapseProgress,
+                                    child: Text(
+                                      HomeScreen.todaysTheme,
+                                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context).colorScheme.primary,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  AnimatedOpacity(
+                                    duration: const Duration(milliseconds: 200),
+                                    opacity: 1.0 - (collapseProgress * 2).clamp(0.0, 1.0),
+                                    child: ElevatedButton.icon(
+                                      onPressed: collapseProgress < 0.8 ? () => context.go('/upload') : null,
+                                      icon: const Icon(Icons.create),
+                                      label: const Text('Start Drawing'),
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 32,
+                                          vertical: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
 
@@ -149,7 +192,7 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
-        bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: widget.isInPageView ? null : BottomNavigationBar(
           currentIndex: 0,
           items: const [
             BottomNavigationBarItem(
@@ -168,11 +211,7 @@ class HomeScreen extends StatelessWidget {
           onTap: (index) {
             switch (index) {
               case 1:
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Drawing feature coming soon!'),
-                  ),
-                );
+                context.go('/upload');
                 break;
               case 2:
                 context.go('/feed');
@@ -180,8 +219,7 @@ class HomeScreen extends StatelessWidget {
             }
           },
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildDrawer(BuildContext context) {

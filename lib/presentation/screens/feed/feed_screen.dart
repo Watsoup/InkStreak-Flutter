@@ -7,24 +7,18 @@ import 'package:inkstreak/presentation/blocs/post/post_state.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
 class FeedScreen extends StatelessWidget {
-  const FeedScreen({super.key});
+  final bool isInPageView;
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PostBloc()..add(const PostLoadRequested()),
-      child: const FeedView(),
-    );
-  }
-}
-
-class FeedView extends StatelessWidget {
-  const FeedView({super.key});
+  const FeedScreen({super.key, this.isInPageView = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: isInPageView ? AppBar(
+        title: const Text('Community Feed'),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+      ) : AppBar(
         title: const Text('Community Feed'),
         centerTitle: false,
         leading: IconButton(
@@ -129,7 +123,7 @@ class FeedView extends StatelessWidget {
           return const SizedBox.shrink();
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: isInPageView ? null : BottomNavigationBar(
         currentIndex: 2,
         items: const [
           BottomNavigationBarItem(
@@ -151,12 +145,7 @@ class FeedView extends StatelessWidget {
               context.go('/home');
               break;
             case 1:
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Drawing feature coming soon!'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
+              context.go('/upload');
               break;
             case 2:
               // Already on feed screen
