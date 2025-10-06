@@ -6,6 +6,8 @@ import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/screens/auth/login_screen.dart';
 import 'package:inkstreak/presentation/screens/main/main_navigation_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
+import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
 
 class AppRouter {
   static GoRouter createRouter(AuthBloc authBloc) {
@@ -78,6 +80,25 @@ class AppRouter {
             key: state.pageKey,
             child: const ProfileScreen(),
           ),
+          routes: [
+            GoRoute(
+              path: 'edit',
+              name: 'profile-edit',
+              pageBuilder: (context, state) {
+                final authState = authBloc.state;
+                final user = authState is auth.AuthAuthenticated ? authState.user : null;
+
+                return MaterialPage(
+                  key: state.pageKey,
+                  child: EditProfileScreen(
+                    username: user?.username ?? 'User',
+                    currentBio: user?.bio,
+                    currentProfilePicture: user?.profilePicture,
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         // Redirect root to home (will be redirected to login if not authenticated)
         GoRoute(
