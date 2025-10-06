@@ -39,14 +39,14 @@ class LoginRequest {
 
 @JsonSerializable()
 class AuthResponse {
+  final bool success;
   final String token;
-  final User user;
-  final int expiresIn;
+  final User? user;
 
   AuthResponse({
+    required this.success,
     required this.token,
-    required this.user,
-    required this.expiresIn,
+    this.user,
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);

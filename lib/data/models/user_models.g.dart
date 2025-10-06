@@ -34,16 +34,18 @@ Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
     };
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
+      success: json['success'] as bool,
       token: json['token'] as String,
-      user: User.fromJson(json['user'] as Map<String, dynamic>),
-      expiresIn: (json['expiresIn'] as num).toInt(),
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
     <String, dynamic>{
+      'success': instance.success,
       'token': instance.token,
       'user': instance.user,
-      'expiresIn': instance.expiresIn,
     };
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(

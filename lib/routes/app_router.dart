@@ -1,19 +1,24 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:inkstreak/presentation/providers/auth_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/screens/auth/login_screen.dart';
 import 'package:inkstreak/presentation/screens/home/home_screen.dart';
+import 'package:inkstreak/presentation/screens/feed/feed_screen.dart';
+import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 
 class AppRouter {
-  static GoRouter createRouter() {
+  static GoRouter createRouter(AuthBloc authBloc) {
     return GoRouter(
       initialLocation: '/login',
       debugLogDiagnostics: true,
+      refreshListenable: GoRouterRefreshStream(authBloc.stream),
       redirect: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final isLoggedIn = authProvider.isAuthenticated;
-        final isAuthUnknown = authProvider.authState == AuthState.unknown;
+        final authState = authBloc.state;
+        final isLoggedIn = authState is AuthAuthenticated;
+        final isAuthUnknown = authState is AuthInitial;
 
         // Show loading screen while checking auth state
         if (isAuthUnknown) {
@@ -50,6 +55,22 @@ class AppRouter {
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             child: const HomeScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/feed',
+          name: 'feed',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const FeedScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const ProfileScreen(),
           ),
         ),
         // Redirect root to home (will be redirected to login if not authenticated)
@@ -91,5 +112,23 @@ class AppRouter {
         ),
       ),
     );
+  }
+}
+
+// Helper class to convert Stream to ChangeNotifier for GoRouter
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+      (dynamic _) => notifyListeners(),
+    );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }

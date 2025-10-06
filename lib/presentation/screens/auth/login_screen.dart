@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:inkstreak/presentation/providers/auth_provider.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
+import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
@@ -29,14 +31,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
-        child: Consumer<AuthProvider>(
-          builder: (context, authProvider, child) {
-            // Listen for authentication changes
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (authProvider.isAuthenticated) {
-                context.go('/home');
-              }
-            });
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthAuthenticated) {
+              context.go('/home');
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Welcome to InkStreak!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
+            final errorMessage = state is AuthUnauthenticated ? state.errorMessage : null;
 
             return Padding(
               padding: const EdgeInsets.all(24.0),
@@ -48,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Icon(
                       Icons.brush,
                       size: 80,
-                      color: Colors.purple,
+                      color: Colors.blue,
                     ),
                     const SizedBox(height: 24),
                     Text(
@@ -65,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 32),
 
                     // Error message
-                    if (authProvider.error != null) ...[
+                    if (errorMessage != null) ...[
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
@@ -81,12 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                authProvider.error!,
+                                errorMessage,
                                 style: TextStyle(color: Colors.red.shade700),
                               ),
                             ),
                             IconButton(
-                              onPressed: authProvider.clearError,
+                              onPressed: () {
+                                context.read<AuthBloc>().add(const AuthErrorCleared());
+                              },
                               icon: Icon(Icons.close, color: Colors.red.shade700),
                               constraints: const BoxConstraints(),
                               padding: EdgeInsets.zero,
@@ -100,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Username field
                     TextFormField(
                       controller: _usernameController,
-                      enabled: !authProvider.isLoading,
+                      enabled: !isLoading,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         hintText: 'Username',
@@ -127,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Password field
                     TextFormField(
                       controller: _passwordController,
-                      enabled: !authProvider.isLoading,
+                      enabled: !isLoading,
                       obscureText: true,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleLogin(),
@@ -157,8 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: authProvider.isLoading ? null : _handleLogin,
-                        child: authProvider.isLoading
+                        onPressed: isLoading ? null : _handleLogin,
+                        child: isLoading
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
@@ -177,9 +188,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _handleLogin() async {
+  void _handleLogin() {
     // Clear any previous errors
-    context.read<AuthProvider>().clearError();
+    context.read<AuthBloc>().add(const AuthErrorCleared());
 
     // Validate form
     if (!_formKey.currentState!.validate()) {
@@ -192,18 +203,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _usernameController.text.trim().toLowerCase();
     final password = sha256.convert(utf8.encode(_passwordController.text)).toString();
 
-    // Attempt login
-    final success = await context.read<AuthProvider>().login(username, password);
-
-    if (success && mounted) {
-      // Navigation will be handled automatically by the router
-      // due to the listener in the Consumer widget
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Welcome to InkStreak!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
+    // Dispatch login event
+    context.read<AuthBloc>().add(AuthLoginRequested(
+      username: username,
+      hashedPassword: password,
+    ));
   }
 }
