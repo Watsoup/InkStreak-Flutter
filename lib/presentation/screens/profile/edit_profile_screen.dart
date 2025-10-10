@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_bloc.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_event.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_state.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String username;
@@ -27,7 +31,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final ImagePicker _imagePicker = ImagePicker();
 
   File? _selectedImage;
-  bool _isLoading = false;
   bool _obscureCurrentPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -99,6 +102,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   title: const Text('Remove Photo', style: TextStyle(color: Colors.red)),
                   onTap: () {
                     Navigator.pop(context);
+                    if (widget.currentProfilePicture != null) {
+                      // Remove from server
+                      context.read<ProfileBloc>().add(
+                            const ProfilePictureRemoveRequested(),
+                          );
+                    }
                     setState(() {
                       _selectedImage = null;
                     });
@@ -142,32 +151,72 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     }
 
+    // Reset the update flag
     setState(() {
-      _isLoading = true;
+      _isFirstUpdate = true;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profile updated successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      // In real app, update the user state in AuthBloc here
-      context.go('/profile');
+    // First, upload profile picture if changed
+    if (_selectedImage != null) {
+      context.read<ProfileBloc>().add(
+            ProfilePictureUpdateRequested(picture: _selectedImage!),
+          );
     }
+    // Bio update happens in BlocListener after picture upload completes
+    else if (_bioController.text != widget.currentBio) {
+      // If no picture change, update bio directly
+      context.read<ProfileBloc>().add(
+            ProfileUpdateRequested(bio: _bioController.text),
+          );
+    }
+
+    // TODO: Handle password change when API endpoint is available
   }
+
+  bool _isFirstUpdate = true;
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileLoaded) {
+          // If this is the first update (picture) and we still need to update bio
+          if (_isFirstUpdate && _bioController.text != widget.currentBio) {
+            _isFirstUpdate = false;
+            // Update bio after picture upload completes
+            context.read<ProfileBloc>().add(
+                  ProfileUpdateRequested(bio: _bioController.text),
+                );
+          } else {
+            // All updates complete
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profile updated successfully!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.go('/profile');
+          }
+        } else if (state is ProfileError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, profileState) {
+          final isUpdating = profileState is ProfileUpdating;
+
+          return _buildScaffold(context, isUpdating);
+        },
+      ),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, bool isUpdating) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
@@ -176,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => context.pop(),
         ),
         actions: [
-          if (_isLoading)
+          if (isUpdating)
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),

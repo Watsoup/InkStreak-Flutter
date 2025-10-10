@@ -1,10 +1,19 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
 import 'package:inkstreak/data/models/post_models.dart';
+import 'package:inkstreak/data/services/api_service.dart';
+import 'package:inkstreak/core/utils/dio_client.dart';
 import 'upload_event.dart';
 import 'upload_state.dart';
 
 class UploadBloc extends Bloc<UploadEvent, UploadState> {
-  UploadBloc() : super(const UploadInitial()) {
+  final ApiService _apiService;
+
+  UploadBloc()
+      : _apiService = ApiService(DioClient.createDio()),
+        super(const UploadInitial()) {
     on<UploadCheckStatus>(_onUploadCheckStatus);
     on<UploadImageSelected>(_onUploadImageSelected);
     on<UploadCaptionChanged>(_onUploadCaptionChanged);
@@ -17,22 +26,34 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     Emitter<UploadState> emit,
   ) async {
     try {
-      // Simulate checking if user posted today
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      // Mock data - in real app, check from API
-      final now = DateTime.now();
-      const hasPostedToday = false; // Change to true to test posted state
+      // Fetch current theme from API
+      final theme = await _apiService.getCurrentTheme();
 
       // Calculate time until next theme (midnight)
+      final now = DateTime.now();
+      final tomorrow = DateTime(now.year, now.month, now.day + 1);
+      final timeUntilNextTheme = tomorrow.difference(now);
+
+      // TODO: Check if user has posted today
+      const hasPostedToday = false;
+
+      emit(UploadReady(
+        hasPostedToday: hasPostedToday,
+        todaysPost: null,
+        todaysTheme: theme.name,
+        timeUntilNextTheme: timeUntilNextTheme,
+      ));
+    } on DioException catch (e) {
+      debugPrint('API Error loading theme: ${e.message}');
+      // Fallback to default theme
+      final now = DateTime.now();
       final tomorrow = DateTime(now.year, now.month, now.day + 1);
       final timeUntilNextTheme = tomorrow.difference(now);
 
       emit(UploadReady(
-        hasPostedToday: hasPostedToday,
-        // In real app, fetch actual post if hasPostedToday is true
+        hasPostedToday: false,
         todaysPost: null,
-        todaysTheme: "Spooky Creatures",
+        todaysTheme: "Daily Theme",
         timeUntilNextTheme: timeUntilNextTheme,
       ));
     } catch (e) {
@@ -44,16 +65,34 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     UploadImageSelected event,
     Emitter<UploadState> emit,
   ) async {
-    final now = DateTime.now();
-    final tomorrow = DateTime(now.year, now.month, now.day + 1);
-    final timeUntilNextTheme = tomorrow.difference(now);
+    try {
+      // Fetch current theme from API
+      final theme = await _apiService.getCurrentTheme();
 
-    emit(UploadImagePicked(
-      image: event.image,
-      caption: '',
-      todaysTheme: "Spooky Creatures",
-      timeUntilNextTheme: timeUntilNextTheme,
-    ));
+      final now = DateTime.now();
+      final tomorrow = DateTime(now.year, now.month, now.day + 1);
+      final timeUntilNextTheme = tomorrow.difference(now);
+
+      emit(UploadImagePicked(
+        image: event.image,
+        caption: '',
+        todaysTheme: theme.name,
+        timeUntilNextTheme: timeUntilNextTheme,
+      ));
+    } on DioException catch (e) {
+      debugPrint('API Error loading theme: ${e.message}');
+      // Fallback to default theme
+      final now = DateTime.now();
+      final tomorrow = DateTime(now.year, now.month, now.day + 1);
+      final timeUntilNextTheme = tomorrow.difference(now);
+
+      emit(UploadImagePicked(
+        image: event.image,
+        caption: '',
+        todaysTheme: "Daily Theme",
+        timeUntilNextTheme: timeUntilNextTheme,
+      ));
+    }
   }
 
   Future<void> _onUploadCaptionChanged(
@@ -79,28 +118,44 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     ));
 
     try {
-      // Simulate upload
-      await Future.delayed(const Duration(seconds: 2));
+      // Call API service to create post
+      final imageFile = File(currentState.image.path);
+      final apiPost = await _apiService.createPost(
+        imageFile,
+        currentState.caption.isEmpty ? null : currentState.caption,
+      );
 
-      // In real app, call API service here
-      // final post = await apiService.createPost(image, caption);
-
-      // Mock successful upload
+      // Convert API post to UI post
       final post = Post(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: 'current_user',
-        username: 'You',
-        imageUrl: currentState.image.path,
-        caption: currentState.caption.isEmpty ? null : currentState.caption,
-        theme: currentState.todaysTheme,
-        yeahCount: 0,
-        commentCount: 0,
-        createdAt: DateTime.now(),
+        id: apiPost.id.toString(),
+        userId: apiPost.authorUsername,
+        username: apiPost.authorUsername,
+        imageUrl: apiPost.picture,
+        caption: apiPost.caption,
+        theme: apiPost.theme,
+        yeahCount: apiPost.yeahCount,
+        commentCount: apiPost.comments.length,
+        createdAt: apiPost.createdAt,
         streakDay: 1,
         isYeahed: false,
       );
 
       emit(UploadSuccess(post: post));
+    } on DioException catch (e) {
+      String errorMessage = 'Failed to upload post';
+      if (e.response != null) {
+        switch (e.response!.statusCode) {
+          case 400:
+            errorMessage = 'Invalid image or missing theme';
+            break;
+          case 500:
+            errorMessage = 'Server error. Please try again later.';
+            break;
+          default:
+            errorMessage = 'Upload failed. Please try again.';
+        }
+      }
+      emit(UploadError(message: errorMessage));
     } catch (e) {
       emit(UploadError(message: 'Failed to upload: $e'));
     }

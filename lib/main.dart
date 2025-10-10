@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_bloc.dart';
 import 'package:inkstreak/routes/app_router.dart';
 import 'package:inkstreak/core/themes/app_theme.dart';
 
@@ -15,8 +16,11 @@ class InkStreakApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final authBloc = AuthBloc();
 
-    return BlocProvider(
-      create: (context) => authBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => authBloc),
+        BlocProvider(create: (context) => ProfileBloc(authBloc: authBloc)),
+      ],
       child: MaterialApp.router(
         title: 'InkStreak',
         debugShowCheckedModeBanner: false,

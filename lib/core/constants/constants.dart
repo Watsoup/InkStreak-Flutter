@@ -7,7 +7,13 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API related constants
-  static const String baseUrl = 'https://api.watsoup.tech/inkstreak/';
+  // Toggle this flag to switch between local and production API
+  static const bool useLocalApi = true;
+
+  static const String _localBaseUrl = 'http://localhost:7777/inkstreak/';
+  static const String _productionBaseUrl = 'https://api.watsoup.tech/inkstreak/';
+
+  static const String baseUrl = useLocalApi ? _localBaseUrl : _productionBaseUrl;
   static const int timeoutDuration = 15;
 
   // Storage keys

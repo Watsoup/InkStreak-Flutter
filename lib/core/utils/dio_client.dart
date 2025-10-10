@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:inkstreak/core/constants/constants.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
 
@@ -55,7 +56,7 @@ class AuthInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $token';
       }
     } catch (e) {
-      print('Error reading token: $e');
+      debugPrint('Error reading token: $e');
     }
 
     handler.next(options);
@@ -70,7 +71,7 @@ class AuthInterceptor extends Interceptor {
         await storage.delete(key: AppConstants.tokenKey);
         await storage.delete(key: AppConstants.userKey);
       } catch (e) {
-        print('Error clearing tokens: $e');
+        debugPrint('Error clearing tokens: $e');
       }
     }
     handler.next(err);

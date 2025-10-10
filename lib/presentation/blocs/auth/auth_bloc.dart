@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:inkstreak/data/models/user_models.dart';
 import 'package:inkstreak/data/services/api_service.dart';
@@ -17,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthErrorCleared>(_onAuthErrorCleared);
+    on<AuthUserUpdated>(_onAuthUserUpdated);
 
     // Check auth state on initialization
     add(const AuthCheckRequested());
@@ -38,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthUnauthenticated());
       }
     } catch (e) {
-      print('Error checking auth state: $e');
+      debugPrint('Error checking auth state: $e');
       emit(const AuthUnauthenticated());
     }
   }
@@ -57,9 +59,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final response = await _apiService.login(loginRequest);
 
-      // Create a user object from the login request data
-      final user = User(
-        id: event.username, // Using username as ID temporarily
+      // Use the user from the API response, or create a fallback
+      final user = response.user ?? User(
+        id: event.username,
         username: event.username,
         createdAt: DateTime.now(),
       );
@@ -92,7 +94,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(const AuthUnauthenticated());
     } catch (e) {
-      print('Error during logout: $e');
+      debugPrint('Error during logout: $e');
       emit(const AuthUnauthenticated());
     }
   }
@@ -103,6 +105,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     if (state is AuthUnauthenticated) {
       emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onAuthUserUpdated(
+    AuthUserUpdated event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      // Save updated user to storage
+      final storage = await StorageService.getInstance();
+      await storage.write(
+        key: AppConstants.userKey,
+        value: json.encode(event.user.toJson()),
+      );
+
+      // Emit updated authenticated state
+      emit(AuthAuthenticated(user: event.user));
+    } catch (e) {
+      debugPrint('Error updating user: $e');
     }
   }
 

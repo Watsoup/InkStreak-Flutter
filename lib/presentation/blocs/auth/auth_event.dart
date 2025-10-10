@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:inkstreak/data/models/user_models.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -30,4 +31,13 @@ class AuthLogoutRequested extends AuthEvent {
 
 class AuthErrorCleared extends AuthEvent {
   const AuthErrorCleared();
+}
+
+class AuthUserUpdated extends AuthEvent {
+  final User user;
+
+  const AuthUserUpdated({required this.user});
+
+  @override
+  List<Object?> get props => [user];
 }

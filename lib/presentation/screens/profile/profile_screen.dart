@@ -4,9 +4,23 @@ import 'package:go_router/go_router.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_bloc.dart';
+import 'package:inkstreak/presentation/blocs/profile/profile_event.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Load profile data
+    context.read<ProfileBloc>().add(const ProfileLoadRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +42,21 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          final user = state is AuthAuthenticated ? state.user : null;
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<ProfileBloc>().add(const ProfileLoadRequested());
+        },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            final user = state is AuthAuthenticated ? state.user : null;
 
-          if (user == null) {
-            return const Center(
-              child: Text('No user logged in'),
-            );
-          }
+            if (user == null) {
+              return const Center(
+                child: Text('No user logged in'),
+              );
+            }
 
-          return SingleChildScrollView(
+            return SingleChildScrollView(
             child: Column(
               children: [
                 // Profile Header
@@ -202,6 +220,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           );
         },
+        ),
       ),
     );
   }
