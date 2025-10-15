@@ -68,7 +68,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
             yeahCount: apiPost.yeahCount,
             commentCount: 0,
             createdAt: apiPost.createdAt,
-            streakDay: 1,
+            streakDay: apiPost.artistStreak,
             isYeahed: isYeahed,
           );
 
@@ -204,7 +204,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         yeahCount: apiPost.yeahCount,
         commentCount: 0, // New posts have no comments yet
         createdAt: apiPost.createdAt,
-        streakDay: 1,
+        streakDay: apiPost.artistStreak,
         isYeahed: isYeahed,
       );
 

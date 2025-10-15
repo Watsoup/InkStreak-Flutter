@@ -238,6 +238,8 @@ class Post {
   @JsonKey(defaultValue: [])
   final List<int> yeahs; // Array of user IDs who yeahed
   final DateTime createdAt;
+  @JsonKey(defaultValue: 1)
+  final int artistStreak;
 
   Post({
     required this.id,
@@ -248,6 +250,7 @@ class Post {
     this.yeahCount = 0,
     this.yeahs = const [],
     required this.createdAt,
+    this.artistStreak = 1,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);

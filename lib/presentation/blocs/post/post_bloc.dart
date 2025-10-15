@@ -313,7 +313,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       yeahCount: apiPost.yeahCount,
       commentCount: 0, // API doesn't include comments in list view
       createdAt: apiPost.createdAt,
-      streakDay: 1, // Calculate from user's posting history
+      streakDay: apiPost.artistStreak,
       isYeahed: isYeahed,
     );
   }

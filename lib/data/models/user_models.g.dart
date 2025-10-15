@@ -187,6 +187,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
               .toList() ??
           [],
       createdAt: DateTime.parse(json['createdAt'] as String),
+      artistStreak: (json['artistStreak'] as num?)?.toInt() ?? 1,
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
@@ -198,6 +199,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'yeahCount': instance.yeahCount,
       'yeahs': instance.yeahs,
       'createdAt': instance.createdAt.toIso8601String(),
+      'artistStreak': instance.artistStreak,
     };
 
 Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
