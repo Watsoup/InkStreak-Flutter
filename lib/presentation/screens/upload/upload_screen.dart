@@ -67,7 +67,7 @@ class _UploadScreenState extends State<UploadScreen> {
           if (state is UploadSuccess) {
             _confettiController.play();
             if (!widget.isInPageView) {
-              Future.delayed(const Duration(seconds: 2), () {
+              Future.delayed(const Duration(seconds: 5), () {
                 if (context.mounted) {
                   context.go('/home');
                 }
@@ -167,6 +167,16 @@ class _UploadScreenState extends State<UploadScreen> {
                       ),
                   textAlign: TextAlign.center,
                 ),
+                if (state.themeDescription != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    state.themeDescription!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ],
             ),
           ),
@@ -301,6 +311,16 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
             textAlign: TextAlign.center,
           ),
+          if (state.themeDescription != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              state.themeDescription!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: 8),
 
           // Timer

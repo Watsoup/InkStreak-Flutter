@@ -38,13 +38,59 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       final tomorrow = DateTime(now.year, now.month, now.day + 1);
       final timeUntilNextTheme = tomorrow.difference(now);
 
-      // TODO: Check if user has posted today
-      const hasPostedToday = false;
+      // Check if user has posted today
+      bool hasPostedToday = false;
+      Post? todaysPost;
+
+      try {
+        // Get current user from storage
+        final storage = await StorageService.getInstance();
+        final userJson = await storage.read(key: AppConstants.userKey);
+
+        if (userJson != null) {
+          final user = api_models.User.fromJson(json.decode(userJson));
+
+          // Try to fetch today's post
+          final apiPost = await _apiService.getTodayPost(user.username);
+
+          // Convert API post to UI post
+          final currentUserId = int.tryParse(user.id);
+          final isYeahed = currentUserId != null && apiPost.yeahs.contains(currentUserId);
+
+          todaysPost = Post(
+            id: apiPost.id.toString(),
+            userId: apiPost.author.id.toString(),
+            username: apiPost.author.username,
+            avatarUrl: apiPost.author.profilePicture,
+            imageUrl: apiPost.picture,
+            caption: apiPost.caption,
+            theme: apiPost.themeName,
+            yeahCount: apiPost.yeahCount,
+            commentCount: 0,
+            createdAt: apiPost.createdAt,
+            streakDay: 1,
+            isYeahed: isYeahed,
+          );
+
+          hasPostedToday = true;
+        }
+      } on DioException catch (e) {
+        // 404 means no post today, which is fine
+        if (e.response?.statusCode == 404) {
+          hasPostedToday = false;
+          todaysPost = null;
+        } else {
+          debugPrint('Error checking today\'s post: ${e.message}');
+        }
+      } catch (e) {
+        debugPrint('Error checking today\'s post: $e');
+      }
 
       emit(UploadReady(
         hasPostedToday: hasPostedToday,
-        todaysPost: null,
+        todaysPost: todaysPost,
         todaysTheme: theme.name,
+        themeDescription: theme.description,
         timeUntilNextTheme: timeUntilNextTheme,
       ));
     } on DioException catch (e) {
@@ -58,6 +104,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         hasPostedToday: false,
         todaysPost: null,
         todaysTheme: "Daily Theme",
+        themeDescription: null,
         timeUntilNextTheme: timeUntilNextTheme,
       ));
     } catch (e) {
@@ -81,6 +128,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         image: event.image,
         caption: '',
         todaysTheme: theme.name,
+        themeDescription: theme.description,
         timeUntilNextTheme: timeUntilNextTheme,
       ));
     } on DioException catch (e) {
@@ -94,6 +142,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         image: event.image,
         caption: '',
         todaysTheme: "Daily Theme",
+        themeDescription: null,
         timeUntilNextTheme: timeUntilNextTheme,
       ));
     }

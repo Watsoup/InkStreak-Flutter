@@ -292,6 +292,20 @@ Map<String, dynamic> _$UpdateProfileResponseToJson(
       'user': instance.user,
     };
 
+UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
+      currentStreak: (json['currentStreak'] as num).toInt(),
+      maxStreak: (json['maxStreak'] as num).toInt(),
+      totalPosts: (json['totalPosts'] as num).toInt(),
+      totalYeahs: (json['totalYeahs'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
+      'currentStreak': instance.currentStreak,
+      'maxStreak': instance.maxStreak,
+      'totalPosts': instance.totalPosts,
+      'totalYeahs': instance.totalYeahs,
+    };
+
 HealthResponse _$HealthResponseFromJson(Map<String, dynamic> json) =>
     HealthResponse(
       status: json['status'] as String,

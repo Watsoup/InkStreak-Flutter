@@ -81,7 +81,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
               controller: _tabController,
               children: [
                 _buildPostsList(),
-                _buildPostsList(),
+                _buildComingSoon(),
               ],
             ),
           ),
@@ -199,6 +199,37 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                 }
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComingSoon() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.favorite_border,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Coming soon!',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Follow your favorite artists and see\ntheir drawings here',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[500],
+                ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

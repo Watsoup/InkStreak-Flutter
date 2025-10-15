@@ -17,29 +17,33 @@ class UploadReady extends UploadState {
   final bool hasPostedToday;
   final Post? todaysPost;
   final String todaysTheme;
+  final String? themeDescription;
   final Duration timeUntilNextTheme;
 
   const UploadReady({
     required this.hasPostedToday,
     this.todaysPost,
     required this.todaysTheme,
+    this.themeDescription,
     required this.timeUntilNextTheme,
   });
 
   @override
-  List<Object?> get props => [hasPostedToday, todaysPost, todaysTheme, timeUntilNextTheme];
+  List<Object?> get props => [hasPostedToday, todaysPost, todaysTheme, themeDescription, timeUntilNextTheme];
 }
 
 class UploadImagePicked extends UploadState {
   final File image;
   final String caption;
   final String todaysTheme;
+  final String? themeDescription;
   final Duration timeUntilNextTheme;
 
   const UploadImagePicked({
     required this.image,
     this.caption = '',
     required this.todaysTheme,
+    this.themeDescription,
     required this.timeUntilNextTheme,
   });
 
@@ -47,18 +51,20 @@ class UploadImagePicked extends UploadState {
     File? image,
     String? caption,
     String? todaysTheme,
+    String? themeDescription,
     Duration? timeUntilNextTheme,
   }) {
     return UploadImagePicked(
       image: image ?? this.image,
       caption: caption ?? this.caption,
       todaysTheme: todaysTheme ?? this.todaysTheme,
+      themeDescription: themeDescription ?? this.themeDescription,
       timeUntilNextTheme: timeUntilNextTheme ?? this.timeUntilNextTheme,
     );
   }
 
   @override
-  List<Object?> get props => [image, caption, todaysTheme, timeUntilNextTheme];
+  List<Object?> get props => [image, caption, todaysTheme, themeDescription, timeUntilNextTheme];
 }
 
 class UploadInProgress extends UploadState {

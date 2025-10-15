@@ -66,6 +66,10 @@ abstract class ApiService {
   @GET("/posts/all")
   Future<List<Post>> getAllPosts();
 
+  /// GET /posts/{username}/today - Get today's post for a specific user
+  @GET("/posts/{username}/today")
+  Future<Post> getTodayPost(@Path("username") String username);
+
   /// GET /posts/followed/{username} - Get posts from users followed by specified user
   @GET("/posts/followed/{username}")
   Future<List<Post>> getFollowedPosts(@Path("username") String username);
@@ -123,6 +127,10 @@ abstract class ApiService {
   /// PATCH /users/profile - Update profile (bio, profilePicture URL)
   @PATCH("/users/profile")
   Future<UpdateProfileResponse> updateProfile(@Body() UpdateProfileRequest request);
+
+  /// GET /users/{username}/stats - Get user statistics (streak, posts, yeahs)
+  @GET("/users/{username}/stats")
+  Future<UserStats> getUserStats(@Path("username") String username);
 
   // ============================================================================
   // Health Check Endpoint

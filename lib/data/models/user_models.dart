@@ -355,6 +355,28 @@ class UpdateProfileResponse {
 }
 
 // ============================================================================
+// User Statistics Model
+// ============================================================================
+
+@JsonSerializable()
+class UserStats {
+  final int currentStreak;
+  final int maxStreak;
+  final int totalPosts;
+  final int totalYeahs;
+
+  UserStats({
+    required this.currentStreak,
+    required this.maxStreak,
+    required this.totalPosts,
+    required this.totalYeahs,
+  });
+
+  factory UserStats.fromJson(Map<String, dynamic> json) => _$UserStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$UserStatsToJson(this);
+}
+
+// ============================================================================
 // Health Check Model
 // ============================================================================
 

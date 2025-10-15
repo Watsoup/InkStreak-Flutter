@@ -49,13 +49,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       try {
         final apiUser = await _apiService.getUser(localUser.username);
 
+        // Fetch user stats
+        UserStats? userStats;
+        try {
+          userStats = await _apiService.getUserStats(localUser.username);
+        } on DioException catch (e) {
+          debugPrint('API Error loading user stats: ${e.message}');
+          // Continue without stats if they fail to load
+        }
+
         // Save updated user to storage
         await _saveUser(apiUser);
 
         // Update AuthBloc with fresh data
         _authBloc.add(AuthUserUpdated(user: apiUser));
 
-        emit(ProfileLoaded(user: apiUser));
+        emit(ProfileLoaded(user: apiUser, stats: userStats));
       } on DioException catch (e) {
         debugPrint('API Error loading profile: ${e.message}');
         // If API fails, use local data
@@ -87,10 +96,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         // Save updated user
         await _saveUser(response.user);
 
+        // Fetch updated stats
+        UserStats? userStats;
+        try {
+          userStats = await _apiService.getUserStats(response.user.username);
+        } on DioException catch (e) {
+          debugPrint('API Error loading user stats: ${e.message}');
+        }
+
         // Update AuthBloc
         _authBloc.add(AuthUserUpdated(user: response.user));
 
-        emit(ProfileLoaded(user: response.user));
+        emit(ProfileLoaded(user: response.user, stats: userStats));
       } else {
         emit(ProfileError(
           message: response.message,
@@ -135,10 +152,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         // Save updated user
         await _saveUser(response.user);
 
+        // Fetch updated stats
+        UserStats? userStats;
+        try {
+          userStats = await _apiService.getUserStats(response.user.username);
+        } on DioException catch (e) {
+          debugPrint('API Error loading user stats: ${e.message}');
+        }
+
         // Update AuthBloc
         _authBloc.add(AuthUserUpdated(user: response.user));
 
-        emit(ProfileLoaded(user: response.user));
+        emit(ProfileLoaded(user: response.user, stats: userStats));
       } else {
         emit(ProfileError(
           message: response.message,
@@ -177,10 +202,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         // Save updated user
         await _saveUser(response.user);
 
+        // Fetch updated stats
+        UserStats? userStats;
+        try {
+          userStats = await _apiService.getUserStats(response.user.username);
+        } on DioException catch (e) {
+          debugPrint('API Error loading user stats: ${e.message}');
+        }
+
         // Update AuthBloc
         _authBloc.add(AuthUserUpdated(user: response.user));
 
-        emit(ProfileLoaded(user: response.user));
+        emit(ProfileLoaded(user: response.user, stats: userStats));
       } else {
         emit(ProfileError(
           message: response.message,

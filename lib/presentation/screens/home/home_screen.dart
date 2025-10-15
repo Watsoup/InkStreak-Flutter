@@ -99,9 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: SafeArea(
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 24.0),
+                                  padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 16.0),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       AnimatedOpacity(
                                         duration: const Duration(milliseconds: 200),
@@ -126,9 +127,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       color: Theme.of(context).colorScheme.primary,
                                                     ),
                                                 textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                       ),
-                                      const SizedBox(height: 24),
+                                      if (themeState is ThemeLoaded && themeState.theme.description != null) ...[
+                                        const SizedBox(height: 8),
+                                        AnimatedOpacity(
+                                          duration: const Duration(milliseconds: 200),
+                                          opacity: 1.0 - collapseProgress,
+                                          child: Text(
+                                            themeState.theme.description!,
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                  color: Colors.grey[700],
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                      const SizedBox(height: 16),
                                       AnimatedOpacity(
                                         duration: const Duration(milliseconds: 200),
                                         opacity: 1.0 - (collapseProgress * 2).clamp(0.0, 1.0),
