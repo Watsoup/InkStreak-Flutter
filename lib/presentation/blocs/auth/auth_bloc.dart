@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:inkstreak/data/models/user_models.dart';
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/constants/constants.dart';
@@ -34,6 +35,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final userJson = await storage.read(key: AppConstants.userKey);
 
       if (token != null && userJson != null) {
+        // Validate token expiry
+        if (_isTokenExpired(token)) {
+          debugPrint('Token has expired. Logging out user.');
+          // Clear expired token and user data
+          await storage.delete(key: AppConstants.tokenKey);
+          await storage.delete(key: AppConstants.userKey);
+          emit(const AuthUnauthenticated(
+            errorMessage: 'Your session has expired. Please login again.',
+          ));
+          return;
+        }
+
         final user = User.fromJson(json.decode(userJson));
         emit(AuthAuthenticated(user: user));
       } else {
@@ -150,6 +163,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return 'Connection timeout. Please check your internet connection.';
     } else {
       return 'Network error. Please check your internet connection.';
+    }
+  }
+
+  /// Validates if a JWT token has expired
+  bool _isTokenExpired(String token) {
+    try {
+      // Use jwt_decoder to check if token is expired
+      return JwtDecoder.isExpired(token);
+    } catch (e) {
+      debugPrint('Error decoding token: $e');
+      // If we can't decode the token, consider it invalid/expired
+      return true;
     }
   }
 }

@@ -104,7 +104,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       conversationId: (json['conversationId'] as num).toInt(),
       senderUsername: json['senderUsername'] as String,
       text: json['text'] as String,
-      createdAt: _dateTimeFromJson(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -134,7 +134,7 @@ Conversation _$ConversationFromJson(Map<String, dynamic> json) => Conversation(
       participants: (json['participants'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      createdAt: _dateTimeFromJson(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'] as String),
       lastMessage: json['lastMessage'] == null
           ? null
           : Message.fromJson(json['lastMessage'] as Map<String, dynamic>),
@@ -162,34 +162,48 @@ Map<String, dynamic> _$CreateConversationRequestToJson(
       'participantUsernames': instance.participantUsernames,
     };
 
+AuthorInfo _$AuthorInfoFromJson(Map<String, dynamic> json) => AuthorInfo(
+      id: (json['id'] as num).toInt(),
+      username: json['username'] as String,
+      profilePicture: json['profilePicture'] as String?,
+    );
+
+Map<String, dynamic> _$AuthorInfoToJson(AuthorInfo instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'username': instance.username,
+      'profilePicture': instance.profilePicture,
+    };
+
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
       id: (json['id'] as num).toInt(),
-      authorUsername: json['authorUsername'] as String,
+      author: AuthorInfo.fromJson(json['author'] as Map<String, dynamic>),
       picture: json['picture'] as String,
       caption: json['caption'] as String?,
-      theme: json['theme'] as String?,
-      yeahCount: (json['yeahCount'] as num).toInt(),
-      comments: (json['comments'] as List<dynamic>)
-          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      createdAt: _dateTimeFromJson(json['createdAt']),
+      themeName: json['themeName'] as String?,
+      yeahCount: (json['yeahCount'] as num?)?.toInt() ?? 0,
+      yeahs: (json['yeahs'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          [],
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'id': instance.id,
-      'authorUsername': instance.authorUsername,
+      'author': instance.author,
       'picture': instance.picture,
       'caption': instance.caption,
-      'theme': instance.theme,
+      'themeName': instance.themeName,
       'yeahCount': instance.yeahCount,
-      'comments': instance.comments,
+      'yeahs': instance.yeahs,
       'createdAt': instance.createdAt.toIso8601String(),
     };
 
 Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
       username: json['username'] as String,
       content: json['content'] as String,
-      createdAt: _dateTimeFromJson(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
@@ -209,17 +223,19 @@ Map<String, dynamic> _$AddCommentRequestToJson(AddCommentRequest instance) =>
     };
 
 Theme _$ThemeFromJson(Map<String, dynamic> json) => Theme(
-      name: json['name'] as String,
+      name: json['themeText'] as String,
       description: json['description'] as String?,
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: DateTime.parse(json['endDate'] as String),
+      startDate: DateTime.parse(json['createdAt'] as String),
+      endDate: json['endDate'] == null
+          ? null
+          : DateTime.parse(json['endDate'] as String),
     );
 
 Map<String, dynamic> _$ThemeToJson(Theme instance) => <String, dynamic>{
-      'name': instance.name,
+      'themeText': instance.name,
       'description': instance.description,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
+      'createdAt': instance.startDate.toIso8601String(),
+      'endDate': instance.endDate?.toIso8601String(),
     };
 
 UpdateProfileRequest _$UpdateProfileRequestFromJson(
@@ -230,7 +246,7 @@ UpdateProfileRequest _$UpdateProfileRequestFromJson(
     );
 
 Map<String, dynamic> _$UpdateProfileRequestToJson(
-        UpdateProfileRequest instance) {
+    UpdateProfileRequest instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {

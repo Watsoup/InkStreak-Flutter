@@ -1,25 +1,96 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
 import 'package:inkstreak/core/constants/constants.dart';
+import 'dart:math';
 import 'dart:convert';
 import 'post_event.dart';
 import 'post_state.dart';
+import 'post_filters.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   final ApiService _apiService;
+  int? _currentUserId;
 
   PostBloc()
       : _apiService = ApiService(DioClient.createDio()),
         super(const PostInitial()) {
     on<PostLoadRequested>(_onPostLoadRequested);
     on<PostRefreshRequested>(_onPostRefreshRequested);
+    on<PostLoadByFilter>(_onPostLoadByFilter);
     on<PostYeahToggled>(_onPostYeahToggled);
+    _loadCurrentUserId();
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    try {
+      final storage = await StorageService.getInstance();
+
+      // Try to get user ID from JWT token first (most reliable)
+      final token = await storage.read(key: AppConstants.tokenKey);
+      if (token != null) {
+        try {
+          final decodedToken = JwtDecoder.decode(token);
+          debugPrint('Decoded JWT token: $decodedToken');
+
+          final userId = decodedToken['id'];
+          debugPrint('User ID from JWT: $userId (type: ${userId.runtimeType})');
+
+          if (userId is int) {
+            _currentUserId = userId;
+            debugPrint('SUCCESS: Loaded current user ID from JWT: $_currentUserId');
+            return;
+          } else if (userId is String) {
+            _currentUserId = int.tryParse(userId);
+            if (_currentUserId != null) {
+              debugPrint('SUCCESS: Loaded current user ID from JWT (parsed): $_currentUserId');
+              return;
+            }
+          }
+        } catch (e) {
+          debugPrint('Failed to decode JWT token: $e');
+        }
+      }
+
+      // Fallback: try to get from stored user data
+      final userJson = await storage.read(key: AppConstants.userKey);
+      debugPrint('Raw user JSON from storage: $userJson');
+
+      if (userJson != null) {
+        final userMap = jsonDecode(userJson) as Map<String, dynamic>;
+        debugPrint('Decoded user map: $userMap');
+
+        final userId = userMap['id'];
+        debugPrint('User ID from map: $userId (type: ${userId.runtimeType})');
+
+        if (userId is int) {
+          _currentUserId = userId;
+          debugPrint('Set _currentUserId from int: $_currentUserId');
+        } else if (userId is String) {
+          _currentUserId = int.tryParse(userId);
+          debugPrint('Set _currentUserId from String parse: $_currentUserId');
+        } else {
+          debugPrint('WARNING: userId is neither int nor String, type: ${userId.runtimeType}');
+        }
+
+        if (_currentUserId == null) {
+          debugPrint('ERROR: Failed to set _currentUserId from userId: $userId');
+        } else {
+          debugPrint('SUCCESS: Loaded current user ID: $_currentUserId');
+        }
+      } else {
+        debugPrint('No user data found in storage');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Error loading current user ID: $e');
+      debugPrint('Stack trace: $stackTrace');
+    }
   }
 
   Future<void> _onPostLoadRequested(
@@ -28,25 +99,27 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     emit(const PostLoading());
 
+    // Ensure user ID is loaded before processing posts
+    if (_currentUserId == null) {
+      await _loadCurrentUserId();
+    }
+
     try {
-      // Get current user's username from storage
-      final storage = await StorageService.getInstance();
-      final userJson = await storage.read(key: AppConstants.userKey);
+      // Fetch all posts (not just followed users)
+      final apiPosts = await _apiService.getAllPosts();
 
-      if (userJson == null) {
-        // No user logged in, show mock posts
-        final posts = Post.getMockPosts();
-        emit(PostLoaded(posts: posts));
-        return;
-      }
+      // Filter posts to show only those created today
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      final todayEnd = todayStart.add(const Duration(days: 1));
 
-      final user = api_models.User.fromJson(json.decode(userJson));
-
-      // Fetch posts from followed users
-      final apiPosts = await _apiService.getFollowedPosts(user.username);
-
-      // Convert API posts to UI posts
-      final posts = apiPosts.map((apiPost) => _convertApiPostToUiPost(apiPost)).toList();
+      // Convert API posts to UI posts and filter for today only
+      final posts = apiPosts
+          .where((apiPost) =>
+              apiPost.createdAt.isAfter(todayStart) &&
+              apiPost.createdAt.isBefore(todayEnd))
+          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .toList();
 
       emit(PostLoaded(posts: posts));
     } on DioException catch (e) {
@@ -64,23 +137,21 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     Emitter<PostState> emit,
   ) async {
     try {
-      // Get current user's username from storage
-      final storage = await StorageService.getInstance();
-      final userJson = await storage.read(key: AppConstants.userKey);
+      // Fetch all posts (not just followed users)
+      final apiPosts = await _apiService.getAllPosts();
 
-      if (userJson == null) {
-        final posts = Post.getMockPosts();
-        emit(PostLoaded(posts: posts));
-        return;
-      }
+      // Filter posts to show only those created today
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      final todayEnd = todayStart.add(const Duration(days: 1));
 
-      final user = api_models.User.fromJson(json.decode(userJson));
-
-      // Fetch posts from followed users
-      final apiPosts = await _apiService.getFollowedPosts(user.username);
-
-      // Convert API posts to UI posts
-      final posts = apiPosts.map((apiPost) => _convertApiPostToUiPost(apiPost)).toList();
+      // Convert API posts to UI posts and filter for today only
+      final posts = apiPosts
+          .where((apiPost) =>
+              apiPost.createdAt.isAfter(todayStart) &&
+              apiPost.createdAt.isBefore(todayEnd))
+          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .toList();
 
       emit(PostLoaded(posts: posts));
     } on DioException catch (e) {
@@ -102,6 +173,61 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
+  Future<void> _onPostLoadByFilter(
+    PostLoadByFilter event,
+    Emitter<PostState> emit,
+  ) async {
+    emit(const PostLoading());
+
+    // Ensure user ID is loaded before processing posts
+    if (_currentUserId == null) {
+      await _loadCurrentUserId();
+    }
+
+    try {
+      // Fetch posts based on feed type
+      List<api_models.Post> apiPosts;
+
+      if (event.feedType == FeedType.everyone) {
+        apiPosts = await _apiService.getAllPosts();
+      } else {
+        // Get current username from storage
+        final storage = await StorageService.getInstance();
+        final username = await storage.read(key: 'username');
+        if (username == null) {
+          emit(const PostError(message: 'User not logged in'));
+          return;
+        }
+        apiPosts = await _apiService.getFollowedPosts(username);
+      }
+
+      // Apply time period filter
+      final dateRange = event.timePeriod.getDateRange();
+      var filteredPosts = apiPosts
+          .where((apiPost) =>
+              apiPost.createdAt.isAfter(dateRange.start) &&
+              apiPost.createdAt.isBefore(dateRange.end))
+          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .toList();
+
+      // Apply sorting
+      if (event.sortType == SortType.best) {
+        filteredPosts.sort((a, b) => b.yeahCount.compareTo(a.yeahCount));
+      } else if (event.sortType == SortType.random) {
+        filteredPosts.shuffle(Random());
+      }
+
+      emit(PostLoaded(posts: filteredPosts));
+    } on DioException catch (e) {
+      debugPrint('API Error loading filtered posts: ${e.message}');
+      // Fallback to mock data
+      final posts = Post.getMockPosts();
+      emit(PostLoaded(posts: posts));
+    } catch (e) {
+      emit(PostError(message: 'Failed to load posts: $e'));
+    }
+  }
+
   Future<void> _onPostYeahToggled(
     PostYeahToggled event,
     Emitter<PostState> emit,
@@ -110,12 +236,21 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
     final currentState = state as PostLoaded;
 
+    // Get the current post to know the target state
+    final targetPost = currentState.posts.firstWhere((p) => p.id == event.postId);
+    final targetIsYeahed = !targetPost.isYeahed;
+    final targetYeahCount = targetPost.isYeahed
+        ? targetPost.yeahCount - 1
+        : targetPost.yeahCount + 1;
+
+    debugPrint('Yeah toggle started - Post: ${event.postId}, Current: ${targetPost.isYeahed}, Target: $targetIsYeahed, CurrentUserId: $_currentUserId');
+
     // Optimistically update UI
     final updatedPosts = currentState.posts.map((post) {
       if (post.id == event.postId) {
         return post.copyWith(
-          isYeahed: !post.isYeahed,
-          yeahCount: post.isYeahed ? post.yeahCount - 1 : post.yeahCount + 1,
+          isYeahed: targetIsYeahed,
+          yeahCount: targetYeahCount,
         );
       }
       return post;
@@ -129,39 +264,57 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       if (postId != null) {
         final updatedPost = await _apiService.toggleYeah(postId);
 
-        // Update with actual API response
-        final finalPosts = updatedPosts.map((post) {
-          if (post.id == event.postId) {
-            return _convertApiPostToUiPost(updatedPost);
-          }
-          return post;
-        }).toList();
+        // Verify the API response matches our optimistic update
+        final apiIsYeahed = _currentUserId != null && updatedPost.yeahs.contains(_currentUserId);
 
-        emit(PostLoaded(posts: finalPosts));
+        debugPrint('Yeah toggle - Target: $targetIsYeahed, API: $apiIsYeahed, Count: ${updatedPost.yeahCount}');
+
+        // Only update if API response differs from optimistic update
+        // This prevents the flicker issue
+        if (apiIsYeahed != targetIsYeahed || updatedPost.yeahCount != targetYeahCount) {
+          debugPrint('API response differs from optimistic update, syncing...');
+          final finalPosts = updatedPosts.map((post) {
+            if (post.id == event.postId) {
+              return _convertApiPostToUiPost(updatedPost);
+            }
+            return post;
+          }).toList();
+          emit(PostLoaded(posts: finalPosts));
+        } else {
+          debugPrint('API response matches optimistic update, keeping current state');
+        }
       }
     } on DioException catch (e) {
       debugPrint('API Error toggling yeah: ${e.message}');
-      // Keep optimistic update if API fails
+      // Revert optimistic update on API failure - restore original state
+      emit(PostLoaded(posts: currentState.posts));
     } catch (e) {
       debugPrint('Error toggling yeah: $e');
-      // Keep optimistic update if API fails
+      // Revert optimistic update on error - restore original state
+      emit(PostLoaded(posts: currentState.posts));
     }
   }
 
   Post _convertApiPostToUiPost(api_models.Post apiPost) {
+    // API now returns: author{id, username, profilePicture}, themeName, yeahs[]
+    // Check if current user has yeahed this post
+    final isYeahed = _currentUserId != null && apiPost.yeahs.contains(_currentUserId);
+
+    debugPrint('Converting post ${apiPost.id}: currentUserId=$_currentUserId, yeahs=${apiPost.yeahs}, isYeahed=$isYeahed');
+
     return Post(
       id: apiPost.id.toString(),
-      userId: apiPost.authorUsername,
-      username: apiPost.authorUsername,
-      avatarUrl: null, // API doesn't provide avatar in post response
+      userId: apiPost.author.id.toString(),
+      username: apiPost.author.username,
+      avatarUrl: apiPost.author.profilePicture,
       imageUrl: apiPost.picture,
       caption: apiPost.caption,
-      theme: apiPost.theme,
+      theme: apiPost.themeName,
       yeahCount: apiPost.yeahCount,
-      commentCount: apiPost.comments.length,
+      commentCount: 0, // API doesn't include comments in list view
       createdAt: apiPost.createdAt,
       streakDay: 1, // Calculate from user's posting history
-      isYeahed: false, // Would need to check against current user's yeahs
+      isYeahed: isYeahed,
     );
   }
 }

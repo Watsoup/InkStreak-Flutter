@@ -62,6 +62,10 @@ abstract class ApiService {
     @Part(name: "caption") String? caption,
   );
 
+  /// GET /posts - Get all posts (for today's feed)
+  @GET("/posts/all")
+  Future<List<Post>> getAllPosts();
+
   /// GET /posts/followed/{username} - Get posts from users followed by specified user
   @GET("/posts/followed/{username}")
   Future<List<Post>> getFollowedPosts(@Path("username") String username);

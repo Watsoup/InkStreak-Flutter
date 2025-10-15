@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:inkstreak/data/models/post_models.dart';
+import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
+import 'package:inkstreak/core/utils/storage_service.dart';
+import 'package:inkstreak/core/constants/constants.dart';
 import 'upload_event.dart';
 import 'upload_state.dart';
 
@@ -118,6 +122,17 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     ));
 
     try {
+      // Get current user info from storage to check if post is yeahed
+      final storage = await StorageService.getInstance();
+      final userJson = await storage.read(key: AppConstants.userKey);
+
+      int? currentUserId;
+      if (userJson != null) {
+        final user = api_models.User.fromJson(json.decode(userJson));
+        // Convert user.id (String) to int if needed
+        currentUserId = int.tryParse(user.id);
+      }
+
       // Call API service to create post
       final imageFile = File(currentState.image.path);
       final apiPost = await _apiService.createPost(
@@ -126,18 +141,22 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       );
 
       // Convert API post to UI post
+      // API now returns: author{id, username, profilePicture}, themeName, yeahs[]
+      final isYeahed = currentUserId != null && apiPost.yeahs.contains(currentUserId);
+
       final post = Post(
         id: apiPost.id.toString(),
-        userId: apiPost.authorUsername,
-        username: apiPost.authorUsername,
+        userId: apiPost.author.id.toString(),
+        username: apiPost.author.username,
+        avatarUrl: apiPost.author.profilePicture,
         imageUrl: apiPost.picture,
         caption: apiPost.caption,
-        theme: apiPost.theme,
+        theme: apiPost.themeName,
         yeahCount: apiPost.yeahCount,
-        commentCount: apiPost.comments.length,
+        commentCount: 0, // New posts have no comments yet
         createdAt: apiPost.createdAt,
         streakDay: 1,
-        isYeahed: false,
+        isYeahed: isYeahed,
       );
 
       emit(UploadSuccess(post: post));
@@ -145,6 +164,10 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String errorMessage = 'Failed to upload post';
       if (e.response != null) {
         switch (e.response!.statusCode) {
+          case 401:
+            errorMessage = 'Your session has expired. Please login again.';
+            debugPrint('Upload failed: 401 Unauthorized - ${e.response!.data}');
+            break;
           case 400:
             errorMessage = 'Invalid image or missing theme';
             break;
@@ -154,9 +177,13 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           default:
             errorMessage = 'Upload failed. Please try again.';
         }
+      } else {
+        debugPrint('Upload failed with no response: ${e.message}');
+        errorMessage = 'Network error. Please check your connection.';
       }
       emit(UploadError(message: errorMessage));
     } catch (e) {
+      debugPrint('Upload failed with unexpected error: $e');
       emit(UploadError(message: 'Failed to upload: $e'));
     }
   }

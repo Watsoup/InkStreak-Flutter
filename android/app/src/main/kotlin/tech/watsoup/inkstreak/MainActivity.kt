@@ -1,4 +1,4 @@
-package com.example.inkstreak
+package tech.watsoup.inkstreak
 
 import io.flutter.embedding.android.FlutterActivity
 

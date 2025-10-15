@@ -6,6 +6,9 @@ import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_state.dart';
+import 'package:inkstreak/presentation/blocs/theme/theme_bloc.dart';
+import 'package:inkstreak/presentation/blocs/theme/theme_event.dart';
+import 'package:inkstreak/presentation/blocs/theme/theme_state.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,128 +16,145 @@ class HomeScreen extends StatefulWidget {
 
   const HomeScreen({super.key, this.isInPageView = false});
 
-  // Static theme for today (will be dynamic later)
-  static const String todaysTheme = "Spooky Creatures";
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Load theme on init
+    context.read<ThemeBloc>().add(const ThemeLoadRequested());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: _buildDrawer(context),
-        body: BlocBuilder<PostBloc, PostState>(
-          builder: (context, postState) {
-            return CustomScrollView(
-              slivers: [
-                // Collapsing SliverAppBar with Theme
-                SliverAppBar(
-                  expandedHeight: 220.0,
-                  floating: false,
-                  pinned: true,
-                  snap: false,
-                  leading: Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.person),
-                      onPressed: () => context.go('/profile'),
-                    ),
-                  ],
-                  flexibleSpace: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constraints) {
-                      // Calculate collapse progress (0.0 = expanded, 1.0 = collapsed)
-                      final double top = constraints.biggest.height;
-                      final double collapsedHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
-                      final double expandedHeight = 220.0;
-                      final double shrinkOffset = expandedHeight - top;
-                      final double collapseProgress = (shrinkOffset / (expandedHeight - collapsedHeight)).clamp(0.0, 1.0);
+        body: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            return BlocBuilder<PostBloc, PostState>(
+              builder: (context, postState) {
+                // Get theme text
+                final String themeText = themeState is ThemeLoaded
+                    ? themeState.theme.name
+                    : themeState is ThemeLoading
+                        ? "Loading..."
+                        : "No theme today";
 
-                      return FlexibleSpaceBar(
-                        centerTitle: true,
-                        title: AnimatedOpacity(
-                          duration: const Duration(milliseconds: 100),
-                          opacity: collapseProgress > 0.5 ? 1.0 : 0.0,
-                          child: Text(
-                            HomeScreen.todaysTheme,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
+                return CustomScrollView(
+                  slivers: [
+                    // Collapsing SliverAppBar with Theme
+                    SliverAppBar(
+                      expandedHeight: 220.0,
+                      floating: false,
+                      pinned: true,
+                      snap: false,
+                      leading: Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
                         ),
-                        background: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).colorScheme.primaryContainer,
-                                Theme.of(context).colorScheme.surface,
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                          child: SafeArea(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 24.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  AnimatedOpacity(
-                                    duration: const Duration(milliseconds: 200),
-                                    opacity: 1.0 - collapseProgress,
-                                    child: Text(
-                                      "Today's theme is...",
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                            color: Colors.grey[700],
-                                          ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  AnimatedOpacity(
-                                    duration: const Duration(milliseconds: 200),
-                                    opacity: 1.0 - collapseProgress,
-                                    child: Text(
-                                      HomeScreen.todaysTheme,
-                                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).colorScheme.primary,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  AnimatedOpacity(
-                                    duration: const Duration(milliseconds: 200),
-                                    opacity: 1.0 - (collapseProgress * 2).clamp(0.0, 1.0),
-                                    child: ElevatedButton.icon(
-                                      onPressed: collapseProgress < 0.8 ? () => context.go('/upload') : null,
-                                      icon: const Icon(Icons.create),
-                                      label: const Text('Start Drawing'),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 32,
-                                          vertical: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      ),
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.person),
+                          onPressed: () => context.go('/profile'),
+                        ),
+                      ],
+                      flexibleSpace: LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          // Calculate collapse progress (0.0 = expanded, 1.0 = collapsed)
+                          final double top = constraints.biggest.height;
+                          final double collapsedHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
+                          final double expandedHeight = 220.0;
+                          final double shrinkOffset = expandedHeight - top;
+                          final double collapseProgress = (shrinkOffset / (expandedHeight - collapsedHeight)).clamp(0.0, 1.0);
+
+                          return FlexibleSpaceBar(
+                            centerTitle: true,
+                            title: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 100),
+                              opacity: collapseProgress > 0.5 ? 1.0 : 0.0,
+                              child: Text(
+                                themeText,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                            background: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).colorScheme.primaryContainer,
+                                    Theme.of(context).colorScheme.surface,
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
+                              child: SafeArea(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 24.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AnimatedOpacity(
+                                        duration: const Duration(milliseconds: 200),
+                                        opacity: 1.0 - collapseProgress,
+                                        child: Text(
+                                          "Today's theme is...",
+                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                color: Colors.grey[700],
+                                              ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      AnimatedOpacity(
+                                        duration: const Duration(milliseconds: 200),
+                                        opacity: 1.0 - collapseProgress,
+                                        child: themeState is ThemeLoading
+                                            ? const CircularProgressIndicator()
+                                            : Text(
+                                                themeText,
+                                                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Theme.of(context).colorScheme.primary,
+                                                    ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                      ),
+                                      const SizedBox(height: 24),
+                                      AnimatedOpacity(
+                                        duration: const Duration(milliseconds: 200),
+                                        opacity: 1.0 - (collapseProgress * 2).clamp(0.0, 1.0),
+                                        child: ElevatedButton.icon(
+                                          onPressed: collapseProgress < 0.8 && themeState is ThemeLoaded
+                                              ? () => context.go('/upload')
+                                              : null,
+                                          icon: const Icon(Icons.create),
+                                          label: const Text('Start Drawing'),
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 32,
+                                              vertical: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
 
                 // Today's Posts Section Header
                 SliverToBoxAdapter(
@@ -188,11 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-              ],
-            );
-          },
-        ),
-        bottomNavigationBar: widget.isInPageView ? null : BottomNavigationBar(
+                ],
+              );
+            },
+          );
+        },
+      ),
+      bottomNavigationBar: widget.isInPageView ? null : BottomNavigationBar(
           currentIndex: 0,
           items: const [
             BottomNavigationBarItem(

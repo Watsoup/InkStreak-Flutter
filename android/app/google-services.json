@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "785303566499",
+    "project_id": "inkstreak-89ad9",
+    "storage_bucket": "inkstreak-89ad9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785303566499:android:214f3de07ac6b859656716",
+        "android_client_info": {
+          "package_name": "com.example.inkstreak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785303566499-u4s77ich3g2tahpai4p1uci22k4afpo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcEPgp2pbnZUJfxWaidzmHTEI-WpWcvak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785303566499-d244agqcbcs1gnp9t8hu63fd3uvjo5qe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785303566499-1rl8hnk841enkpegb0e4e151u5kk65ne.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.inkstreak"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785303566499:android:614a1514afdaf686656716",
+        "android_client_info": {
+          "package_name": "tech.watsoup.inkstreak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785303566499-u4s77ich3g2tahpai4p1uci22k4afpo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcEPgp2pbnZUJfxWaidzmHTEI-WpWcvak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785303566499-d244agqcbcs1gnp9t8hu63fd3uvjo5qe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785303566499-1rl8hnk841enkpegb0e4e151u5kk65ne.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.inkstreak"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

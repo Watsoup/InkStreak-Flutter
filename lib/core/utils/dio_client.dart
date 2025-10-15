@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:inkstreak/core/constants/constants.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
 
@@ -52,11 +53,37 @@ class AuthInterceptor extends Interceptor {
     try {
       final storage = await StorageService.getInstance();
       final token = await storage.read(key: AppConstants.tokenKey);
+
       if (token != null) {
+        // Validate token before using it
+        if (_isTokenExpired(token)) {
+          debugPrint('AuthInterceptor: Token has expired. Clearing stored credentials.');
+          await storage.delete(key: AppConstants.tokenKey);
+          await storage.delete(key: AppConstants.userKey);
+
+          // Reject the request with a clear error
+          handler.reject(
+            DioException(
+              requestOptions: options,
+              response: Response(
+                requestOptions: options,
+                statusCode: 401,
+                statusMessage: 'Token expired',
+                data: {'error': 'Your session has expired. Please login again.'},
+              ),
+              type: DioExceptionType.badResponse,
+            ),
+          );
+          return;
+        }
+
         options.headers['Authorization'] = 'Bearer $token';
+        debugPrint('AuthInterceptor: Added Authorization header to ${options.path}');
+      } else {
+        debugPrint('AuthInterceptor: No token found for ${options.path}');
       }
     } catch (e) {
-      debugPrint('Error reading token: $e');
+      debugPrint('AuthInterceptor: Error reading token: $e');
     }
 
     handler.next(options);
@@ -65,15 +92,28 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
+      debugPrint('AuthInterceptor: 401 error received. Response: ${err.response?.data}');
       // Token expired or invalid - clear stored token
       try {
         final storage = await StorageService.getInstance();
         await storage.delete(key: AppConstants.tokenKey);
         await storage.delete(key: AppConstants.userKey);
+        debugPrint('AuthInterceptor: Cleared stored credentials due to 401 error');
       } catch (e) {
-        debugPrint('Error clearing tokens: $e');
+        debugPrint('AuthInterceptor: Error clearing tokens: $e');
       }
     }
     handler.next(err);
+  }
+
+  /// Validates if a JWT token has expired
+  bool _isTokenExpired(String token) {
+    try {
+      return JwtDecoder.isExpired(token);
+    } catch (e) {
+      debugPrint('AuthInterceptor: Error decoding token: $e');
+      // If we can't decode the token, consider it invalid/expired
+      return true;
+    }
   }
 }

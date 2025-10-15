@@ -211,24 +211,42 @@ class CreateConversationRequest {
 // ============================================================================
 
 @JsonSerializable()
+class AuthorInfo {
+  final int id;
+  final String username;
+  final String? profilePicture;
+
+  AuthorInfo({
+    required this.id,
+    required this.username,
+    this.profilePicture,
+  });
+
+  factory AuthorInfo.fromJson(Map<String, dynamic> json) => _$AuthorInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthorInfoToJson(this);
+}
+
+@JsonSerializable()
 class Post {
   final int id;
-  final String authorUsername;
+  final AuthorInfo author;
   final String picture;
   final String? caption;
-  final String? theme;
+  final String? themeName;
+  @JsonKey(defaultValue: 0)
   final int yeahCount;
-  final List<Comment> comments;
+  @JsonKey(defaultValue: [])
+  final List<int> yeahs; // Array of user IDs who yeahed
   final DateTime createdAt;
 
   Post({
     required this.id,
-    required this.authorUsername,
+    required this.author,
     required this.picture,
     this.caption,
-    this.theme,
-    required this.yeahCount,
-    required this.comments,
+    this.themeName,
+    this.yeahCount = 0,
+    this.yeahs = const [],
     required this.createdAt,
   });
 
@@ -268,16 +286,18 @@ class AddCommentRequest {
 
 @JsonSerializable()
 class Theme {
+  @JsonKey(name: 'themeText')
   final String name;
   final String? description;
+  @JsonKey(name: 'createdAt')
   final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? endDate;
 
   Theme({
     required this.name,
     this.description,
     required this.startDate,
-    required this.endDate,
+    this.endDate,
   });
 
   factory Theme.fromJson(Map<String, dynamic> json) => _$ThemeFromJson(json);

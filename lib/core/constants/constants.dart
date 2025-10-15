@@ -8,7 +8,7 @@ class AppConstants {
 
   // API related constants
   // Toggle this flag to switch between local and production API
-  static const bool useLocalApi = true;
+  static const bool useLocalApi = false;
 
   static const String _localBaseUrl = 'http://localhost:7777/inkstreak/';
   static const String _productionBaseUrl = 'https://api.watsoup.tech/inkstreak/';

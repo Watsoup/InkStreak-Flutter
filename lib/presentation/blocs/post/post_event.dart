@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:inkstreak/presentation/blocs/post/post_filters.dart';
 
 abstract class PostEvent extends Equatable {
   const PostEvent();
@@ -13,6 +14,21 @@ class PostLoadRequested extends PostEvent {
 
 class PostRefreshRequested extends PostEvent {
   const PostRefreshRequested();
+}
+
+class PostLoadByFilter extends PostEvent {
+  final FeedType feedType;
+  final SortType sortType;
+  final TimePeriod timePeriod;
+
+  const PostLoadByFilter({
+    required this.feedType,
+    required this.sortType,
+    required this.timePeriod,
+  });
+
+  @override
+  List<Object?> get props => [feedType, sortType, timePeriod];
 }
 
 class PostYeahToggled extends PostEvent {
