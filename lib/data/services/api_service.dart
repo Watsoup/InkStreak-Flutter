@@ -22,6 +22,21 @@ abstract class ApiService {
   @POST("/auth/checkToken")
   Future<TokenValidResponse> checkToken(@Body() CheckTokenRequest request);
 
+  /// GET /auth/discord - Initiate Discord OAuth flow
+  @GET("/auth/discord")
+  Future<void> initiateDiscordOAuth(@Query("state") String? state);
+
+  /// GET /auth/discord/callback - Discord OAuth callback
+  @GET("/auth/discord/callback")
+  Future<DiscordCallbackResponse> discordCallback(
+    @Query("code") String code,
+    @Query("state") String state,
+  );
+
+  /// GET /auth/discord/status - Check Discord account link status
+  @GET("/auth/discord/status")
+  Future<DiscordStatusResponse> getDiscordStatus();
+
   // ============================================================================
   // Chat/Messages Endpoints
   // ============================================================================
@@ -131,6 +146,24 @@ abstract class ApiService {
   /// GET /users/{username}/stats - Get user statistics (streak, posts, yeahs)
   @GET("/users/{username}/stats")
   Future<UserStats> getUserStats(@Path("username") String username);
+
+  // ============================================================================
+  // Notification Endpoints
+  // ============================================================================
+
+  /// POST /notifications/register-token - Register FCM token for push notifications
+  @POST("/notifications/register-token")
+  Future<RegisterTokenResponse> registerFCMToken(@Body() RegisterTokenRequest request);
+
+  /// POST /notifications/settings - Update notification preferences
+  @POST("/notifications/settings")
+  Future<UpdateNotificationSettingsResponse> updateNotificationSettings(
+    @Body() UpdateNotificationSettingsRequest request,
+  );
+
+  /// DELETE /notifications/token - Unregister FCM token
+  @DELETE("/notifications/token")
+  Future<RegisterTokenResponse> unregisterFCMToken();
 
   // ============================================================================
   // Health Check Endpoint

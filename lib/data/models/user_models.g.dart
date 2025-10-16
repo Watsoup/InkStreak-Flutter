@@ -52,6 +52,42 @@ Map<String, dynamic> _$TokenValidResponseToJson(TokenValidResponse instance) =>
       'valid': instance.valid,
     };
 
+DiscordCallbackResponse _$DiscordCallbackResponseFromJson(
+        Map<String, dynamic> json) =>
+    DiscordCallbackResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      discordId: json['discordId'] as String?,
+      discordUsername: json['discordUsername'] as String?,
+    );
+
+Map<String, dynamic> _$DiscordCallbackResponseToJson(
+        DiscordCallbackResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
+      'discordId': instance.discordId,
+      'discordUsername': instance.discordUsername,
+    };
+
+DiscordStatusResponse _$DiscordStatusResponseFromJson(
+        Map<String, dynamic> json) =>
+    DiscordStatusResponse(
+      linked: json['linked'] as bool,
+      discordId: json['discordId'] as String?,
+      discordUsername: json['discordUsername'] as String?,
+      message: json['message'] as String?,
+    );
+
+Map<String, dynamic> _$DiscordStatusResponseToJson(
+        DiscordStatusResponse instance) =>
+    <String, dynamic>{
+      'linked': instance.linked,
+      'discordId': instance.discordId,
+      'discordUsername': instance.discordUsername,
+      'message': instance.message,
+    };
+
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: _idFromJson(json['id']),
       username: json['username'] as String,
@@ -316,4 +352,64 @@ HealthResponse _$HealthResponseFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$HealthResponseToJson(HealthResponse instance) =>
     <String, dynamic>{
       'status': instance.status,
+    };
+
+RegisterTokenRequest _$RegisterTokenRequestFromJson(
+        Map<String, dynamic> json) =>
+    RegisterTokenRequest(
+      fcmToken: json['fcmToken'] as String,
+      platform: json['platform'] as String,
+    );
+
+Map<String, dynamic> _$RegisterTokenRequestToJson(
+        RegisterTokenRequest instance) =>
+    <String, dynamic>{
+      'fcmToken': instance.fcmToken,
+      'platform': instance.platform,
+    };
+
+RegisterTokenResponse _$RegisterTokenResponseFromJson(
+        Map<String, dynamic> json) =>
+    RegisterTokenResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+    );
+
+Map<String, dynamic> _$RegisterTokenResponseToJson(
+        RegisterTokenResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
+    };
+
+UpdateNotificationSettingsRequest _$UpdateNotificationSettingsRequestFromJson(
+        Map<String, dynamic> json) =>
+    UpdateNotificationSettingsRequest(
+      dailyReminders: json['dailyReminders'] as bool,
+      yeahNotifications: json['yeahNotifications'] as bool,
+      commentNotifications: json['commentNotifications'] as bool,
+      followerNotifications: json['followerNotifications'] as bool,
+    );
+
+Map<String, dynamic> _$UpdateNotificationSettingsRequestToJson(
+        UpdateNotificationSettingsRequest instance) =>
+    <String, dynamic>{
+      'dailyReminders': instance.dailyReminders,
+      'yeahNotifications': instance.yeahNotifications,
+      'commentNotifications': instance.commentNotifications,
+      'followerNotifications': instance.followerNotifications,
+    };
+
+UpdateNotificationSettingsResponse _$UpdateNotificationSettingsResponseFromJson(
+        Map<String, dynamic> json) =>
+    UpdateNotificationSettingsResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+    );
+
+Map<String, dynamic> _$UpdateNotificationSettingsResponseToJson(
+        UpdateNotificationSettingsResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
     };

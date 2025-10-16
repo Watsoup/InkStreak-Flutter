@@ -84,6 +84,42 @@ class TokenValidResponse {
   Map<String, dynamic> toJson() => _$TokenValidResponseToJson(this);
 }
 
+@JsonSerializable()
+class DiscordCallbackResponse {
+  final bool success;
+  final String message;
+  final String? discordId;
+  final String? discordUsername;
+
+  DiscordCallbackResponse({
+    required this.success,
+    required this.message,
+    this.discordId,
+    this.discordUsername,
+  });
+
+  factory DiscordCallbackResponse.fromJson(Map<String, dynamic> json) => _$DiscordCallbackResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$DiscordCallbackResponseToJson(this);
+}
+
+@JsonSerializable()
+class DiscordStatusResponse {
+  final bool linked;
+  final String? discordId;
+  final String? discordUsername;
+  final String? message;
+
+  DiscordStatusResponse({
+    required this.linked,
+    this.discordId,
+    this.discordUsername,
+    this.message,
+  });
+
+  factory DiscordStatusResponse.fromJson(Map<String, dynamic> json) => _$DiscordStatusResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$DiscordStatusResponseToJson(this);
+}
+
 // ============================================================================
 // User Models
 // ============================================================================
@@ -391,4 +427,68 @@ class HealthResponse {
 
   factory HealthResponse.fromJson(Map<String, dynamic> json) => _$HealthResponseFromJson(json);
   Map<String, dynamic> toJson() => _$HealthResponseToJson(this);
+}
+
+// ============================================================================
+// Notification Models
+// ============================================================================
+
+@JsonSerializable()
+class RegisterTokenRequest {
+  final String fcmToken;
+  final String platform; // 'android', 'ios', 'web'
+
+  RegisterTokenRequest({
+    required this.fcmToken,
+    required this.platform,
+  });
+
+  factory RegisterTokenRequest.fromJson(Map<String, dynamic> json) => _$RegisterTokenRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$RegisterTokenRequestToJson(this);
+}
+
+@JsonSerializable()
+class RegisterTokenResponse {
+  final bool success;
+  final String message;
+
+  RegisterTokenResponse({
+    required this.success,
+    required this.message,
+  });
+
+  factory RegisterTokenResponse.fromJson(Map<String, dynamic> json) => _$RegisterTokenResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$RegisterTokenResponseToJson(this);
+}
+
+@JsonSerializable()
+class UpdateNotificationSettingsRequest {
+  final bool dailyReminders;
+  final bool yeahNotifications;
+  final bool commentNotifications;
+  final bool followerNotifications;
+
+  UpdateNotificationSettingsRequest({
+    required this.dailyReminders,
+    required this.yeahNotifications,
+    required this.commentNotifications,
+    required this.followerNotifications,
+  });
+
+  factory UpdateNotificationSettingsRequest.fromJson(Map<String, dynamic> json) => _$UpdateNotificationSettingsRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$UpdateNotificationSettingsRequestToJson(this);
+}
+
+@JsonSerializable()
+class UpdateNotificationSettingsResponse {
+  final bool success;
+  final String message;
+
+  UpdateNotificationSettingsResponse({
+    required this.success,
+    required this.message,
+  });
+
+  factory UpdateNotificationSettingsResponse.fromJson(Map<String, dynamic> json) => _$UpdateNotificationSettingsResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$UpdateNotificationSettingsResponseToJson(this);
 }

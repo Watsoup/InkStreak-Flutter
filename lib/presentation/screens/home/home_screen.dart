@@ -200,33 +200,74 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 else if (postState is PostLoaded)
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final post = postState.posts[index];
-                          return PostCard(
-                            post: post,
-                            onYeahTap: () {
-                              context.read<PostBloc>().add(
-                                    PostYeahToggled(postId: post.id),
-                                  );
-                            },
-                            onCommentTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Comments feature coming soon!'),
-                                  duration: Duration(seconds: 1),
+                  postState.posts.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                            padding: const EdgeInsets.all(24.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(16.0),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.draw_outlined,
+                                  size: 64,
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
                                 ),
-                              );
-                            },
-                          );
-                        },
-                        childCount: postState.posts.length,
-                      ),
-                    ),
-                  ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No drawings yet today',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Be the first to share your artwork!',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final post = postState.posts[index];
+                                return PostCard(
+                                  post: post,
+                                  onYeahTap: () {
+                                    context.read<PostBloc>().add(
+                                          PostYeahToggled(postId: post.id),
+                                        );
+                                  },
+                                  onCommentTap: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Comments feature coming soon!'),
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              childCount: postState.posts.length,
+                            ),
+                          ),
+                        ),
                 ],
               );
             },
@@ -322,11 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Settings'),
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Settings coming soon!'),
-                ),
-              );
+              context.go('/settings');
             },
           ),
           ListTile(

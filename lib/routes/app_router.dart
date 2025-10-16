@@ -7,6 +7,7 @@ import 'package:inkstreak/presentation/screens/auth/login_screen.dart';
 import 'package:inkstreak/presentation/screens/main/main_navigation_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
+import 'package:inkstreak/presentation/screens/settings/settings_screen.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
 
 class AppRouter {
@@ -99,6 +100,14 @@ class AppRouter {
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: '/settings',
+          name: 'settings',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const SettingsScreen(),
+          ),
         ),
         // Redirect root to home (will be redirected to login if not authenticated)
         GoRoute(
