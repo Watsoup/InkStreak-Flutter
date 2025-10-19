@@ -1,5 +1,4 @@
-import 'dart:io' if (dart.library.html) 'dart:html';
-import 'dart:typed_data';
+import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
