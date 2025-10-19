@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -87,7 +87,7 @@ class NotificationService {
     );
 
     // Create Android notification channel
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       await _localNotifications
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(_channel);
@@ -96,6 +96,11 @@ class NotificationService {
 
   /// Request notification permissions
   Future<bool> _requestPermissions() async {
+    if (kIsWeb) {
+      // Web doesn't support local notifications in the same way
+      return true;
+    }
+
     if (Platform.isIOS) {
       final settings = await _firebaseMessaging.requestPermission(
         alert: true,
@@ -143,7 +148,9 @@ class NotificationService {
   Future<void> _registerTokenWithBackend(String token) async {
     try {
       String platform = 'unknown';
-      if (Platform.isAndroid) {
+      if (kIsWeb) {
+        platform = 'web';
+      } else if (Platform.isAndroid) {
         platform = 'android';
       } else if (Platform.isIOS) {
         platform = 'ios';
