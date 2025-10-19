@@ -1,5 +1,7 @@
-import 'dart:io';
+import 'dart:io' if (dart.library.html) 'dart:html';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:confetti/confetti.dart';
@@ -48,7 +50,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
       if (image != null && context.mounted) {
         context.read<UploadBloc>().add(
-              UploadImageSelected(image: File(image.path)),
+              UploadImageSelected(image: image),
             );
       }
     } catch (e) {
@@ -66,13 +68,15 @@ class _UploadScreenState extends State<UploadScreen> {
         listener: (context, state) {
           if (state is UploadSuccess) {
             _confettiController.play();
-            if (!widget.isInPageView) {
-              Future.delayed(const Duration(seconds: 5), () {
-                if (context.mounted) {
-                  context.go('/home');
-                }
-              });
-            }
+            // Always redirect to home after successful upload
+            Future.delayed(const Duration(seconds: 3), () {
+              if (context.mounted) {
+                // Acknowledge success and reset state
+                context.read<UploadBloc>().add(const UploadSuccessAcknowledged());
+                // Navigate to home
+                context.go('/home');
+              }
+            });
           } else if (state is UploadError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -333,10 +337,27 @@ class _UploadScreenState extends State<UploadScreen> {
           // Image Preview
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.file(
-              state.image,
-              fit: BoxFit.cover,
-            ),
+            child: kIsWeb
+                ? FutureBuilder<Uint8List>(
+                    future: state.image.readAsBytes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return Image.memory(
+                          snapshot.data!,
+                          fit: BoxFit.cover,
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error loading image: ${snapshot.error}'),
+                        );
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                  )
+                : Image.file(
+                    File(state.image.path),
+                    fit: BoxFit.cover,
+                  ),
           ),
           const SizedBox(height: 16),
 
