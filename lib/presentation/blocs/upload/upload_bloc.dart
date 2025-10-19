@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io' as io;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
@@ -8,6 +8,7 @@ import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
+import 'package:inkstreak/core/utils/universal_file.dart' show createFileFromXFile;
 import 'package:inkstreak/core/constants/constants.dart';
 import 'upload_event.dart';
 import 'upload_state.dart';
@@ -23,6 +24,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     on<UploadCaptionChanged>(_onUploadCaptionChanged);
     on<UploadSubmitted>(_onUploadSubmitted);
     on<UploadReset>(_onUploadReset);
+    on<UploadSuccessAcknowledged>(_onUploadSuccessAcknowledged);
   }
 
   Future<void> _onUploadCheckStatus(
@@ -183,11 +185,35 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       }
 
       // Call API service to create post
-      final imageFile = File(currentState.image.path);
-      final apiPost = await _apiService.createPost(
-        imageFile,
-        currentState.caption.isEmpty ? null : currentState.caption,
-      );
+      // Handle web and mobile platforms differently for file upload
+      final api_models.Post apiPost;
+      if (kIsWeb) {
+        // For web, manually create FormData with bytes
+        final bytes = await currentState.image.readAsBytes();
+        final formData = FormData.fromMap({
+          'picture': MultipartFile.fromBytes(
+            bytes,
+            filename: currentState.image.name,
+          ),
+          if (currentState.caption.isNotEmpty)
+            'caption': currentState.caption,
+        });
+
+        // Make direct Dio call
+        final dio = DioClient.createDio();
+        final response = await dio.post(
+          '${AppConstants.baseUrl}/posts',
+          data: formData,
+        );
+        apiPost = api_models.Post.fromJson(response.data);
+      } else {
+        // For mobile, use the regular File-based approach with dart:io File
+        final imageFile = createFileFromXFile(currentState.image);
+        apiPost = await _apiService.createPost(
+          imageFile as io.File,
+          currentState.caption.isEmpty ? null : currentState.caption,
+        );
+      }
 
       // Convert API post to UI post
       // API now returns: author{id, username, profilePicture}, themeName, yeahs[]
@@ -241,6 +267,14 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     UploadReset event,
     Emitter<UploadState> emit,
   ) async {
+    add(const UploadCheckStatus());
+  }
+
+  Future<void> _onUploadSuccessAcknowledged(
+    UploadSuccessAcknowledged event,
+    Emitter<UploadState> emit,
+  ) async {
+    // Reset to ready state and fetch updated status
     add(const UploadCheckStatus());
   }
 }

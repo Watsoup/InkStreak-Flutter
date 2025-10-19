@@ -6,8 +6,9 @@ import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/data/services/notification_service.dart';
-import 'package:inkstreak/presentation/blocs/theme/theme_bloc.dart';
-import 'package:inkstreak/presentation/blocs/theme/theme_state.dart';
+import 'package:inkstreak/presentation/blocs/app_theme/app_theme_bloc.dart';
+import 'package:inkstreak/presentation/blocs/app_theme/app_theme_event.dart';
+import 'package:inkstreak/presentation/blocs/app_theme/app_theme_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -138,7 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
         // Get current theme and username for daily reminders
         try {
           final theme = await _apiService.getCurrentTheme();
-          final username = await _storage.read(key: AppConstants.usernameKey);
+          final username = await _storage.read(key: 'username');
           if (username != null) {
             await _notificationService.scheduleDailyReminders(
               username: username,
@@ -146,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             );
           }
         } catch (e) {
-          print('Error scheduling daily reminders: $e');
+          debugPrint('Error scheduling daily reminders: $e');
         }
       } else {
         await _notificationService.cancelDailyReminders();
@@ -161,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
         );
       }
     } catch (e) {
-      print('Error syncing notification settings: $e');
+      debugPrint('Error syncing notification settings: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -361,15 +362,17 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
 
           // Appearance Section
           _buildSectionHeader(context, 'Appearance'),
-          BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              // For now, we only have light theme
-              // This is placeholder for future dark mode implementation
+          BlocBuilder<AppThemeBloc, AppThemeState>(
+            builder: (context, themeState) {
               return SwitchListTile(
                 title: const Text('Dark Mode'),
-                subtitle: const Text('Coming soon'),
-                value: false,
-                onChanged: null, // Disabled for now
+                subtitle: Text(themeState.isDarkMode
+                  ? 'Enabled'
+                  : 'Disabled'),
+                value: themeState.isDarkMode,
+                onChanged: (value) {
+                  context.read<AppThemeBloc>().add(const ToggleTheme());
+                },
               );
             },
           ),
@@ -382,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             title: Text(_discordLinked ? 'Discord Account' : 'Link Discord Account'),
             subtitle: Text(_discordLinked
               ? 'Linked as ${_discordUsername ?? 'Unknown'}'
-              : 'Connect your Discord for notifications'),
+              : 'Connect your Discord account for bot integrations'),
             trailing: _discordLinked
               ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
               : const Icon(Icons.arrow_forward_ios, size: 16),

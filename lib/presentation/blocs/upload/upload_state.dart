@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:inkstreak/data/models/post_models.dart';
 
 abstract class UploadState extends Equatable {
@@ -33,7 +33,7 @@ class UploadReady extends UploadState {
 }
 
 class UploadImagePicked extends UploadState {
-  final File image;
+  final XFile image;
   final String caption;
   final String todaysTheme;
   final String? themeDescription;
@@ -48,7 +48,7 @@ class UploadImagePicked extends UploadState {
   });
 
   UploadImagePicked copyWith({
-    File? image,
+    XFile? image,
     String? caption,
     String? todaysTheme,
     String? themeDescription,
@@ -68,7 +68,7 @@ class UploadImagePicked extends UploadState {
 }
 
 class UploadInProgress extends UploadState {
-  final File image;
+  final XFile image;
   final String caption;
 
   const UploadInProgress({

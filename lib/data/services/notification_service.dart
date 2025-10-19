@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
@@ -11,7 +12,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 /// Background message handler - must be top-level function
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message: ${message.messageId}');
+  debugPrint('Handling a background message: ${message.messageId}');
   // Handle the message in the background
 }
 
@@ -66,13 +67,10 @@ class NotificationService {
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        // Handle iOS notification tap while app is in foreground
-      },
     );
 
     final InitializationSettings initSettings = InitializationSettings(
@@ -122,7 +120,7 @@ class NotificationService {
   Future<String?> _getFCMToken() async {
     try {
       _fcmToken = await _firebaseMessaging.getToken();
-      print('FCM Token: $_fcmToken');
+      debugPrint('FCM Token: $_fcmToken');
 
       if (_fcmToken != null) {
         await _registerTokenWithBackend(_fcmToken!);
@@ -136,7 +134,7 @@ class NotificationService {
 
       return _fcmToken;
     } catch (e) {
-      print('Error getting FCM token: $e');
+      debugPrint('Error getting FCM token: $e');
       return null;
     }
   }
@@ -157,9 +155,9 @@ class NotificationService {
       );
 
       await _apiService.registerFCMToken(request);
-      print('FCM token registered with backend');
+      debugPrint('FCM token registered with backend');
     } catch (e) {
-      print('Error registering FCM token with backend: $e');
+      debugPrint('Error registering FCM token with backend: $e');
     }
   }
 
@@ -167,20 +165,20 @@ class NotificationService {
   void _setupMessageHandlers() {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received foreground message: ${message.messageId}');
+      debugPrint('Received foreground message: ${message.messageId}');
       _showNotification(message);
     });
 
     // Handle notification tap when app is in background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification opened app from background: ${message.messageId}');
+      debugPrint('Notification opened app from background: ${message.messageId}');
       _handleNotificationOpenedApp(message);
     });
 
     // Check if app was opened from a terminated state
     _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
-        print('App opened from terminated state: ${message.messageId}');
+        debugPrint('App opened from terminated state: ${message.messageId}');
         _handleNotificationOpenedApp(message);
       }
     });
@@ -222,13 +220,13 @@ class NotificationService {
 
   /// Handle notification tap
   Future<void> _handleNotificationTap(NotificationResponse response) async {
-    print('Notification tapped: ${response.payload}');
+    debugPrint('Notification tapped: ${response.payload}');
     // TODO: Navigate to appropriate screen based on notification type
   }
 
   /// Handle notification that opened the app
   void _handleNotificationOpenedApp(RemoteMessage message) {
-    print('Handling notification that opened app: ${message.data}');
+    debugPrint('Handling notification that opened app: ${message.data}');
     // TODO: Navigate to appropriate screen based on notification type
   }
 
@@ -329,14 +327,14 @@ class NotificationService {
       );
 
       await _apiService.updateNotificationSettings(request);
-      print('Notification settings updated on backend');
+      debugPrint('Notification settings updated on backend');
 
       // Update local daily reminders
       if (!dailyReminders) {
         await cancelDailyReminders();
       }
     } catch (e) {
-      print('Error updating notification settings: $e');
+      debugPrint('Error updating notification settings: $e');
       rethrow;
     }
   }
@@ -346,9 +344,9 @@ class NotificationService {
     try {
       await _apiService.unregisterFCMToken();
       await _firebaseMessaging.deleteToken();
-      print('FCM token unregistered');
+      debugPrint('FCM token unregistered');
     } catch (e) {
-      print('Error unregistering FCM token: $e');
+      debugPrint('Error unregistering FCM token: $e');
     }
   }
 

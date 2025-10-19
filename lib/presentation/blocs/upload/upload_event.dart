@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class UploadEvent extends Equatable {
   const UploadEvent();
@@ -13,7 +13,7 @@ class UploadCheckStatus extends UploadEvent {
 }
 
 class UploadImageSelected extends UploadEvent {
-  final File image;
+  final XFile image;
 
   const UploadImageSelected({required this.image});
 
@@ -36,4 +36,8 @@ class UploadSubmitted extends UploadEvent {
 
 class UploadReset extends UploadEvent {
   const UploadReset();
+}
+
+class UploadSuccessAcknowledged extends UploadEvent {
+  const UploadSuccessAcknowledged();
 }
