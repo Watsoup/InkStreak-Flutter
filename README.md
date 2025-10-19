@@ -24,44 +24,42 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Description :** Un thème de dessin est imposé chaque jour à tous les utilisateurs.
 
 **Spécifications :**
-- Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
-- Affichage du thème du jour dès l'ouverture de l'application
-- Notification push pour annoncer le nouveau thème
-- Thème définit aléatoirement parmi une immense liste
-- Langue des thèmes / de l'app : Anglais par défaut, possible traduction FR en bonus
+- [x] Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
+- [x] Affichage du thème du jour dès l'ouverture de l'application
+- [ ] Notification push pour annoncer le nouveau thème
+- [x] Thème définit aléatoirement parmi une immense liste
+- [x] Langue des thèmes / de l'app : Anglais par défaut
 
 ### 2.2 Import de dessin
 
 **Description :** Les utilisateurs peuvent uploader leur dessin jusqu'à minuit.
 
 **Spécifications :**
-- Deux méthodes d'import :
-  - Photo depuis l'appareil photo (capture directe)
-  - Import depuis la galerie de l'appareil
-- Formats acceptés : JPEG, PNG, HEIC
-- Taille maximale du fichier : 10-20 MB, compresser si besoin
-- Un seul dessin par utilisateur par jour
-- Deadline : minuit (Zurich)
-- Option de recadrage/rotation avant publication (bonus)
-- Que se passe-t-il après minuit ? Choix du nouveau thème par le serveur, mise a zéro le feed du jour
+- [x] Deux méthodes d'import :
+  - [x] Photo depuis l'appareil photo (capture directe)
+  - [x] Import depuis la galerie de l'appareil
+- [x] Formats acceptés : JPEG, PNG, HEIC
+- [x] Taille maximale du fichier : 10-20 MB, compresser si besoin
+- [x] Un seul dessin par utilisateur par jour
+- [x] Deadline : minuit (Zurich)
+- [ ] Option de recadrage/rotation avant publication (bonus)
 
 ### 2.3 Feed principal
 
 **Description :** Affichage des dessins de la journée, triés par popularité.
 
 **Spécifications :**
-- Tri par défaut : nombre de "Yeah" décroissant (par jour)
-- Affichage : Liste façon Instagram
-- Informations visibles : pseudo de l'artiste, nombre de "Yeah", heure de publication, description, commentaires
-- Possibilité de trier par :
-  - Plus populaires
-  - Plus récents
-  - Aléatoire (découverte)
-- Rafraîchissement manuel (onLoad ou scrollUp)
-- Scroll infini
-- Possibilité de zoomer sur ine image (comme Instagram, encore)
-- Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah"
-- Filtre par niveau (débutant/confirmé) ? (Bonus)
+- [x] Tri par défaut : Post les plus récents
+- [x] Affichage : Liste façon Instagram
+- [x] Informations visibles : pseudo de l'artiste, nombre de "Yeah",  description, commentaires
+- [x] Possibilité de trier par :
+  - [x] Plus populaires
+  - [x] Aléatoire (découverte)
+- [ ] Rafraîchissement manuel (onLoad ou scrollUp)
+- [x] Scroll infini
+- [ ] Possibilité de zoomer sur ine image (comme Instagram, encore)
+- [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah"
+- [ ] Filtre par niveau (débutant/confirmé) ? (Bonus)
 
 ### 2.4 Système de "Yeah"
 
@@ -81,65 +79,62 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Description :** Page personnelle de chaque utilisateur avec calendrier des participations.
 
 **Spécifications :**
-- Informations du profil :
-  - Pseudo
-  - Photo de profil
-  - Bio (description courte)
-  - Date d'inscription
-  - Statistiques (série actuelle, série maximale, total de dessins, total de Yeah)
-- Calendrier visuel :
-  - Vue mensuelle avec miniatures des dessins
-  - Chaque case -> Miniature du dessin, Jour (date), nb de Yeah
-  - Jours manqués clairement identifiables -> Miniature grisée, impossible d'aggrandir
-  - Possibilité de naviguer entre les mois
-- Clic sur un jour = affichage du dessin en grand
-- Possibilité de suivre d'autres utilisateurs
-- Système de bio/description/pdp personnalisable ?
+- [x] Informations du profil :
+  - [x] Pseudo
+  - [x] Photo de profil
+  - [x] Bio (description courte)
+  - [x] Date d'inscription
+  - [x] Statistiques (série actuelle, série maximale, total de dessins, total de Yeah)
+- [ ] Calendrier visuel :
+  - [ ] Vue mensuelle avec miniatures des dessins
+  - [ ] Chaque case -> Miniature du dessin, Jour (date), nb de Yeah
+  - [ ] Jours manqués clairement identifiables -> Miniature grisée, impossible d'aggrandir
+  - [ ] Possibilité de naviguer entre les mois
+- [ ] Clic sur un jour = affichage du dessin en grand
+- [ ] Possibilité de suivre d'autres utilisateurs
+- [x] Système de bio/description/pdp personnalisable ?
 
 ### 2.6 Misc
-- Commentaires sur les dessins
-- Messages privés
-- Système de suivi (following/followers)
+- [ ] Commentaires sur les dessins
+- [ ] Messages privés
+- [ ] Système de suivi (following/followers)
 
 ## 3. Fonctionnalités secondaires
 
 ### 3.2 Gamification avancée
-- Badges de participation (7 jours, 30 jours, 100 jours, etc.)
-- Achievements spéciaux (premier "Yeah", 100 "Yeah" sur un dessin, etc.)
-- Classement mensuel/annuel
-- Défis spéciaux hebdomadaires
+- [ ] Badges de participation (7 jours, 30 jours, 100 jours, etc.)
+- [ ] Achievements spéciaux (premier "Yeah", 100 "Yeah" sur un dessin, etc.)
+- [ ] Classement mensuel/annuel
+- [ ] Défis spéciaux hebdomadaires
+- [x] Affichage journalier sur Discord
 
 ### 3.3 Découverte et inspiration
-- Section "Explorer" avec dessins populaires de tous les temps
-- Archives des thèmes passés avec galeries
-- Recherche par thème, utilisateur, date
-- Suggestions d'utilisateurs à suivre
-
-### 3.4 Communauté
-- Système de report de contenu inapproprié
-- Modération (automatique et manuelle)
-- Guidelines de la communauté
-- Espace FAQ/tutoriels
+- [x] Section "Explorer" avec dessins populaires de tous les temps
+- [ ] Archives des thèmes passés avec galeries
+- [ ] Recherche par thème, utilisateur, date
 
 ## 4. Spécifications techniques
 
 ### 4.1 Plateformes
-- Android
-- Linux
-- Version web
-- iOS (Bonus)
+- [x] Android
+- [x] Linux
+- [x] Version web PWA
+- [x] iOS (Bonus)
 
 ### 4.2 Architecture technique
-- Backend : API RESTful
-- Base de données : Neon PostgreSQL
-- Stockage des images : ImgBB
-- Authentification : username/mot de passe (OAuth en bonus)
-- Notifications push : À définir, important
+- Backend : API RESTful (Hono)
+- Base de données : PostgreSQL (Neon)
+- Stockage des images : Bucket R2 Cloudflare
+- Notifications push : Firebase Cloud Messaging
+- Authentification : 
+  - [x] Username / mot de passe
+  - [x] Discord
+  - [ ] (OAuth en bonus)
 
 ### 4.4 Sécurité
-- Chiffrement des données en transit (HTTPS)
-- Aucune donnée sensible (mot de passe chiffré SHA256)
-- Authentification sécurisée (token, refresh token)
+- [x] Chiffrement des données en transit (HTTPS)
+- [x] Aucune donnée sensible (mot de passe chiffré SHA256)
+- [x] Authentification sécurisée (token, refresh token)
 
 ## 5. Contraintes et règles métier
 
@@ -174,51 +169,31 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 ## 7. Planning et phases
 
 ### Phase 1 - MVP (Minimum Viable Product)
-- Système de thème quotidien
-- Upload de dessin (photo/galerie)
-- Feed avec tri par "Yeah"
-- Système de "Yeah"
-- Profil avec calendrier basique
-- Authentification simple
+- [x] Système de thème quotidien
+- [x] Upload de dessin (photo/galerie)
+- [x] Feed avec tri par "Yeah"
+- [x] Système de "Yeah"
+- [ ] Profil avec calendrier basique
+- [x] Authentification simple
 
 ### Phase 2 - Enrichissement
-- Système de suivi utilisateurs
-- Commentaires
-- Badges et achievements
-- Notifications enrichies
-- Partage externe
+- [ ] Système de suivi utilisateurs
+- [ ] Commentaires
+- [ ] Badges et achievements
+- [ ] Notifications enrichies
+- [ ] Partage externe
 
 ### Phase 3 - Communauté avancée
-- Messagerie privée
-- Défis spéciaux
-- Classements
-- Section Explorer
-- Modération avancée
+- [ ] Messagerie privée
+- [ ] Défis spéciaux
+- [x] Classements
+- [ ] Section Explorer
+- [ ] Modération avancée
 
-
-## 10. Risques et points d'attention
-
-- **Modération de contenu :** Nécessité d'un système efficace pour éviter les contenus inappropriés
-- **Scalabilité :** Gérer l'afflux de participations à l'approche de minuit
-- **Engagement :** Maintenir la motivation des utilisateurs sur le long terme
-- **Compétition toxique :** Éviter que la gamification ne devienne décourageante pour les débutants
-- **Fuseaux horaires :** Gestion complexe des deadlines selon les localisations
-- **Stockage :** Coût croissant avec l'accumulation des images
 
 ---
 
-## Questions ouvertes pour discussion
-
-1. **Thèmes :** Quel processus de sélection ? Banque de thèmes prédéfinis, génération IA, curation humaine ?
-2. **Monétisation :** Modèle gratuit uniquement ou freemium avec options premium ?
-3. **Participation manquée :** Pénalité sur les streaks ou simple interruption ?
-4. **Niveaux de skill :** Séparer débutants et confirmés ou feed unique ?
-5. **Vie privée :** Comptes publics par défaut ou option de profil privé ?
-6. **Modération :** Niveau de tolérance pour les interprétations artistiques des thèmes ?
-7. **Multilingue :** Support de plusieurs langues dès le MVP ?
-8. **Participation tardive :** Autoriser l'upload après minuit avec marqueur spécial ou bloquer totalement ?
-
-## 11.2 Fonctionnalités secondaires (post-v1)
+## 11.1 Fonctionnalités secondaires (post-v1)
 
 ### Gamification avancée
 
@@ -235,32 +210,29 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 
 ### Découverte et inspiration
 
-- Section "Explorer" avec :
-    - Dessins les plus populaires de tous les temps
-    - Dessins tendances de la semaine/du mois
-    - Sélection de la rédaction
+- [x] Section "Explorer" avec :
+    - [x] Dessins les plus populaires de tous les temps
+    - [ ] Sélection de la rédaction
 
-- Archives des thèmes passés avec galeries filtrables
-- Recherche avancée par :
-    - Thème spécifique
-    - Utilisateur
-    - Date/période
-    - Tags
+- [ ] Archives des thèmes passés avec galeries filtrables
+- [ ] Recherche avancée par :
+    - [ ] Thème spécifique
+    - [ ] Utilisateur
+    - [ ] Date/période
+    - [ ] Tags
 
-
-- Suggestions personnalisées d'utilisateurs à suivre
-- Page de statistiques globales de la plateforme
+- [ ] Page de statistiques globales de la plateforme (bonus)
 
 ### Communauté et social
 
-- Commentaires sur les dessins (avec mentions)
+- Commentaires sur les dessins
 - Messages privés entre utilisateurs
 - Système de suivi avancé (following/followers)
 - Notifications sociales :
-    -Nouveau follower
-    -Commentaire sur votre dessin
-    -Mention dans un commentaire
-    -Message privé reçu
+    - Nouveau follower
+    - Commentaire sur votre dessin
+    - Mention dans un commentaire
+    - Message privé reçu
 
 - Partage externe vers autres réseaux sociaux (Instagram, Twitter, etc.)
 - Création de collections/favoris personnels
@@ -278,7 +250,6 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 ### Améliorations du profil
 
 - Profils privés (option de confidentialité)
-- Portfolio personnalisable
 - Bio enrichie (liens externes, réseaux sociaux)
 - Statistiques détaillées :
     - Graphiques d'évolution (Yeah average...)
@@ -287,13 +258,10 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
     - Temps moyen de dessin (si tracking implémenté)
 - Export de son calendrier/portfolio en PDF ou image
 
-- Fonctionnalités premium (si monétisation future)
-
 - Thèmes personnalisés pour soi-même
 - Statistiques avancées
 - Badge premium visible
 - Stockage illimité/qualité maximale des images
-- Pas de publicité (si pub implémentée)
 - Accès anticipé aux nouvelles fonctionnalités
 
 ## 11.3 Ordre de priorité suggéré (post-v1)
@@ -314,7 +282,9 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 
 ### Priorité basse (fonctionnalités "nice to have")
 11. Défis spéciaux hebdomadaires
-12. Système de mentorat
-13. Export portfolio en PDF
 14. Forum communautaire
-15. Thèmes personnalisés premium
+
+- Système de report de contenu inapproprié
+- Modération (automatique et manuelle)
+- Guidelines de la communauté
+- Espace FAQ/tutoriels
