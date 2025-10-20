@@ -13,6 +13,9 @@ import 'package:inkstreak/core/themes/app_theme.dart';
 import 'package:inkstreak/firebase_options.dart';
 import 'package:inkstreak/data/services/notification_service.dart';
 
+// Global navigator key for navigation from notification service
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

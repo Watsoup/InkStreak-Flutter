@@ -357,15 +357,15 @@ Map<String, dynamic> _$HealthResponseToJson(HealthResponse instance) =>
 RegisterTokenRequest _$RegisterTokenRequestFromJson(
         Map<String, dynamic> json) =>
     RegisterTokenRequest(
-      fcmToken: json['fcmToken'] as String,
-      platform: json['platform'] as String,
+      token: json['token'] as String,
+      deviceId: json['deviceId'] as String?,
     );
 
 Map<String, dynamic> _$RegisterTokenRequestToJson(
         RegisterTokenRequest instance) =>
     <String, dynamic>{
-      'fcmToken': instance.fcmToken,
-      'platform': instance.platform,
+      'token': instance.token,
+      'deviceId': instance.deviceId,
     };
 
 RegisterTokenResponse _$RegisterTokenResponseFromJson(

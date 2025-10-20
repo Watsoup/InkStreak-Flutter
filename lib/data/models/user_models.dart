@@ -435,12 +435,12 @@ class HealthResponse {
 
 @JsonSerializable()
 class RegisterTokenRequest {
-  final String fcmToken;
-  final String platform; // 'android', 'ios', 'web'
+  final String token;
+  final String? deviceId; // Optional device identifier (platform info)
 
   RegisterTokenRequest({
-    required this.fcmToken,
-    required this.platform,
+    required this.token,
+    this.deviceId,
   });
 
   factory RegisterTokenRequest.fromJson(Map<String, dynamic> json) => _$RegisterTokenRequestFromJson(json);

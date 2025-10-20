@@ -970,11 +970,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<RegisterTokenResponse> unregisterFCMToken() async {
+  Future<RegisterTokenResponse> unregisterFCMToken(
+      Map<String, String> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
     final _options = _setStreamType<RegisterTokenResponse>(Options(
       method: 'DELETE',
       headers: _headers,
@@ -982,7 +984,7 @@ class _ApiService implements ApiService {
     )
         .compose(
           _dio.options,
-          '/notifications/token',
+          '/notifications/unregister-token',
           queryParameters: queryParameters,
           data: _data,
         )

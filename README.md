@@ -27,7 +27,7 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - [x] Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
 - [x] Affichage du thème du jour dès l'ouverture de l'application
 - [ ] Notification push pour annoncer le nouveau thème
-- [x] Thème définit aléatoirement parmi une immense liste
+- [x] Thème défini aléatoirement parmi une immense liste
 - [x] Langue des thèmes / de l'app : Anglais par défaut
 
 ### 2.2 Import de dessin
@@ -42,37 +42,33 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - [x] Taille maximale du fichier : 10-20 MB, compresser si besoin
 - [x] Un seul dessin par utilisateur par jour
 - [x] Deadline : minuit (Zurich)
-- [ ] Option de recadrage/rotation avant publication (bonus)
 
 ### 2.3 Feed principal
 
 **Description :** Affichage des dessins de la journée, triés par popularité.
 
 **Spécifications :**
-- [x] Tri par défaut : Post les plus récents
+- [x] Tri par défaut : Posts les plus récents
 - [x] Affichage : Liste façon Instagram
-- [x] Informations visibles : pseudo de l'artiste, nombre de "Yeah",  description, commentaires
+- [x] Informations visibles : pseudo de l'artiste, nombre de "Yeah", description, commentaires
 - [x] Possibilité de trier par :
   - [x] Plus populaires
   - [x] Aléatoire (découverte)
 - [ ] Rafraîchissement manuel (onLoad ou scrollUp)
 - [x] Scroll infini
-- [ ] Possibilité de zoomer sur ine image (comme Instagram, encore)
 - [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah"
-- [ ] Filtre par niveau (débutant/confirmé) ? (Bonus)
 
 ### 2.4 Système de "Yeah"
 
 **Description :** Mécanisme de vote/like pour les dessins.
 
 **Spécifications :**
-- Un "Yeah" = un vote positif
-- Limite : un "Yeah" par utilisateur par dessin, disponible si l'utilisateur a fait un dessin aujourd'hui
-- Compteur visible en temps réel
-- Possibilité de retirer son "Yeah"
-- Historique des "Yeah" reçus pour chaque utilisateur
-- Statistiques globales (total de "Yeah" reçus)
-- Système de points/récompenses basé sur les "Yeah" (Bonus -> badges ou achievement)
+- [x] Un "Yeah" = un vote positif
+- [ ] Limite : un "Yeah" par utilisateur par dessin, disponible si l'utilisateur a fait un dessin aujourd'hui
+- [x] Compteur visible en temps réel
+- [x] Possibilité de retirer son "Yeah"
+- [x] Historique des "Yeah" reçus pour chaque utilisateur
+- [x] Statistiques globales (total de "Yeah" reçus)
 
 ### 2.5 Profil utilisateur
 
@@ -87,86 +83,65 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
   - [x] Statistiques (série actuelle, série maximale, total de dessins, total de Yeah)
 - [ ] Calendrier visuel :
   - [ ] Vue mensuelle avec miniatures des dessins
-  - [ ] Chaque case -> Miniature du dessin, Jour (date), nb de Yeah
-  - [ ] Jours manqués clairement identifiables -> Miniature grisée, impossible d'aggrandir
+  - [ ] Chaque case : miniature du dessin, jour (date), nb de Yeah
+  - [ ] Jours manqués clairement identifiables (miniature grisée, impossible d'agrandir)
   - [ ] Possibilité de naviguer entre les mois
 - [ ] Clic sur un jour = affichage du dessin en grand
-- [ ] Possibilité de suivre d'autres utilisateurs
-- [x] Système de bio/description/pdp personnalisable ?
 
-### 2.6 Misc
+### 2.6 Interactions sociales
+
+**Spécifications :**
 - [ ] Commentaires sur les dessins
-- [ ] Messages privés
 - [ ] Système de suivi (following/followers)
+- [ ] Possibilité de suivre d'autres utilisateurs
 
-## 3. Fonctionnalités secondaires
+## 3. Spécifications techniques
 
-### 3.2 Gamification avancée
-- [ ] Badges de participation (7 jours, 30 jours, 100 jours, etc.)
-- [ ] Achievements spéciaux (premier "Yeah", 100 "Yeah" sur un dessin, etc.)
-- [ ] Classement mensuel/annuel
-- [ ] Défis spéciaux hebdomadaires
-- [x] Affichage journalier sur Discord
-
-### 3.3 Découverte et inspiration
-- [x] Section "Explorer" avec dessins populaires de tous les temps
-- [ ] Archives des thèmes passés avec galeries
-- [ ] Recherche par thème, utilisateur, date
-
-## 4. Spécifications techniques
-
-### 4.1 Plateformes
+### 3.1 Plateformes
 - [x] Android
 - [x] Linux
 - [x] Version web PWA
-- [x] iOS (Bonus)
+- [x] iOS
 
-### 4.2 Architecture technique
-- Backend : API RESTful (Hono)
-- Base de données : PostgreSQL (Neon)
-- Stockage des images : Bucket R2 Cloudflare
-- Notifications push : Firebase Cloud Messaging
-- Authentification : 
+### 3.2 Architecture technique
+- **Backend :** API RESTful (Hono)
+- **Base de données :** PostgreSQL (Neon)
+- **Stockage des images :** Bucket R2 Cloudflare
+- **Notifications push :** Firebase Cloud Messaging
+- **Authentification :**
   - [x] Username / mot de passe
-  - [x] Discord
-  - [ ] (OAuth en bonus)
+  - [x] Discord OAuth
 
-### 4.4 Sécurité
+### 3.3 Sécurité
 - [x] Chiffrement des données en transit (HTTPS)
 - [x] Aucune donnée sensible (mot de passe chiffré SHA256)
 - [x] Authentification sécurisée (token, refresh token)
 
-## 5. Contraintes et règles métier
+## 4. Contraintes et règles métier
 
-### 5.1 Règles de participation
+### 4.1 Règles de participation
 - Un dessin par jour maximum
-- Deadline stricte à minuit
+- Deadline stricte à minuit (Zurich)
 - Le dessin doit correspondre au thème du jour
 - Formats acceptés uniquement : images (pas de vidéos / gif / psd / autre)
 
-### 5.2 Règles de contenu
+### 4.2 Règles de contenu
 - Contenu approprié uniquement (pas de nudité, violence, haine, etc.)
 - Propriété intellectuelle respectée (pas de plagiat)
 - Dessins originaux uniquement (pas de copies)
 - Pas d'images générées par IA
 
-### 5.3 Modération (BONUS)
-- Système de report par les utilisateurs
-- Modération automatique (IA) pour détecter contenu inapproprié
-- Modération manuelle pour les cas ambigus
-- Sanctions graduées (avertissement, suspension, bannissement)
+## 5. Design et expérience utilisateur
 
-## 6. Design et expérience utilisateur
-
-### 6.3 Écrans principaux
-- **Écran de Login**: Création ou connexion du compte
+### 5.1 Écrans principaux
+- **Écran de Login :** Création ou connexion du compte
 - **Écran d'accueil :** Thème du jour + bouton d'upload + feed
 - **Feed :** Liste des dessins du jour
 - **Profil :** Calendrier personnel + statistiques
 - **Upload :** Interface de capture/import de dessin
 - **Détail dessin :** Vue complète + "Yeah" + infos artiste
 
-## 7. Planning et phases
+## 6. Planning et phases
 
 ### Phase 1 - MVP (Minimum Viable Product)
 - [x] Système de thème quotidien
@@ -190,101 +165,116 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - [ ] Section Explorer
 - [ ] Modération avancée
 
+## 7. Fonctionnalités bonus et améliorations futures
 
----
+### 7.1 Gamification avancée
 
-## 11.1 Fonctionnalités secondaires (post-v1)
+**Badges et achievements :**
+- [ ] Badges de participation (7 jours, 30 jours, 100 jours, 365 jours)
+- [ ] Achievements spéciaux :
+  - [ ] Premier "Yeah" reçu
+  - [ ] 10, 50, 100, 500, 1000 "Yeah" sur un dessin
+  - [ ] 100, 500, 1000 dessins totaux
+  - [ ] Participation pendant événements spéciaux (style Duolingo)
+- [ ] Système de niveaux/rangs basé sur l'activité
 
-### Gamification avancée
+**Compétitions :**
+- [ ] Classement mensuel/annuel avec podium
+- [ ] Défis spéciaux hebdomadaires ou thématiques
+- [x] Affichage journalier sur Discord
 
-- Badges de participation multiples (7 jours, 30 jours, 100 jours, 365 jours, etc.)
-- Achievements spéciaux :
-    - Premier "Yeah" reçu
-    - 10, 50, 100, 500, 1000 "Yeah" sur un dessin
-    - 100, 500, 1000 dessins totaux
-    - Participation pendant événements spéciaux (duolingo style)
+### 7.2 Découverte et inspiration
 
-- Classement mensuel/annuel avec podium
-- Défis spéciaux hebdomadaires ou thématiques
-- Système de niveaux/rangs basé sur l'activité
+**Section Explorer :**
+- [x] Dessins les plus populaires de tous les temps
+- [ ] Sélection de la rédaction
 
-### Découverte et inspiration
-
-- [x] Section "Explorer" avec :
-    - [x] Dessins les plus populaires de tous les temps
-    - [ ] Sélection de la rédaction
-
+**Archives et recherche :**
 - [ ] Archives des thèmes passés avec galeries filtrables
 - [ ] Recherche avancée par :
-    - [ ] Thème spécifique
-    - [ ] Utilisateur
-    - [ ] Date/période
-    - [ ] Tags
+  - [ ] Thème spécifique
+  - [ ] Utilisateur
+  - [ ] Date/période
+  - [ ] Tags
+- [ ] Page de statistiques globales de la plateforme
 
-- [ ] Page de statistiques globales de la plateforme (bonus)
+### 7.3 Communauté et social avancé
 
-### Communauté et social
+**Interactions enrichies :**
+- [ ] Messages privés entre utilisateurs
+- [ ] Notifications sociales :
+  - [ ] Nouveau follower
+  - [ ] Commentaire sur votre dessin
+  - [ ] Mention dans un commentaire
+  - [ ] Message privé reçu
+- [ ] Partage externe vers autres réseaux sociaux (Instagram, Twitter, etc.)
+- [ ] Création de collections/favoris personnels
+- [ ] Système de tags personnalisés pour organiser ses dessins
 
-- Commentaires sur les dessins
-- Messages privés entre utilisateurs
-- Système de suivi avancé (following/followers)
-- Notifications sociales :
-    - Nouveau follower
-    - Commentaire sur votre dessin
-    - Mention dans un commentaire
-    - Message privé reçu
+**Outils communautaires :**
+- [ ] Guidelines de la communauté visibles
+- [ ] Espace FAQ interactif
+- [ ] Section tutoriels/tips pour améliorer son dessin
+- [ ] Forum ou espace discussion
+- [ ] Événements communautaires spéciaux (contests, collaborations)
+- [ ] Système de mentorat (artistes confirmés / débutants)
 
-- Partage externe vers autres réseaux sociaux (Instagram, Twitter, etc.)
-- Création de collections/favoris personnels
-- Système de tags personnalisés pour organiser ses dessins
+### 7.4 Améliorations du profil
 
-### Fonctionnalités communautaires
+**Confidentialité et personnalisation :**
+- [ ] Profils privés (option de confidentialité)
+- [ ] Bio enrichie (liens externes, réseaux sociaux)
 
-- Guidelines de la communauté visibles
-- Espace FAQ interactif
-- Section tutoriels/tips pour améliorer son dessin
-- Forum ou espace discussion (optionnel)
-- Événements communautaires spéciaux (contests, collaborations)
-- Système de mentorat (artistes confirmés / débutants)
+**Statistiques avancées :**
+- [ ] Graphiques d'évolution (moyenne de Yeah, etc.)
+- [ ] Meilleurs thèmes par "Yeah"
+- [ ] Taux de participation mensuel
+- [ ] Temps moyen de dessin (si tracking implémenté)
+- [ ] Export de son calendrier/portfolio en PDF ou image
 
-### Améliorations du profil
+**Fonctionnalités premium :**
+- [ ] Thèmes personnalisés
+- [ ] Badge premium visible
+- [ ] Stockage illimité/qualité maximale des images
+- [ ] Accès anticipé aux nouvelles fonctionnalités
 
-- Profils privés (option de confidentialité)
-- Bio enrichie (liens externes, réseaux sociaux)
-- Statistiques détaillées :
-    - Graphiques d'évolution (Yeah average...)
-    - Meilleurs thèmes par "Yeah"
-    - Taux de participation mensuel
-    - Temps moyen de dessin (si tracking implémenté)
-- Export de son calendrier/portfolio en PDF ou image
+### 7.5 Améliorations de l'expérience utilisateur
 
-- Thèmes personnalisés pour soi-même
-- Statistiques avancées
-- Badge premium visible
-- Stockage illimité/qualité maximale des images
-- Accès anticipé aux nouvelles fonctionnalités
+**Upload et édition :**
+- [ ] Option de recadrage/rotation avant publication
+- [ ] Possibilité de zoomer sur une image (comme Instagram)
+- [ ] Filtre par niveau (débutant/confirmé)
 
-## 11.3 Ordre de priorité suggéré (post-v1)
-### Priorité haute (améliore significativement l'expérience)
+### 7.6 Modération
 
+**Système de modération :**
+- [ ] Système de report par les utilisateurs
+- [ ] Modération automatique (IA) pour détecter contenu inapproprié
+- [ ] Modération manuelle pour les cas ambigus
+- [ ] Sanctions graduées (avertissement, suspension, bannissement)
+
+### 7.7 Ordre de priorité suggéré (post-MVP)
+
+**Priorité haute** (améliore significativement l'expérience) :
 1. Commentaires sur les dessins
 2. Badges de participation de base (7, 30, 100 jours)
 3. Section "Explorer" avec meilleurs dessins
 4. Système de suivi (following/followers)
 5. Notifications sociales basiques
 
-### Priorité moyenne (enrichit la plateforme)
+**Priorité moyenne** (enrichit la plateforme) :
 6. Messages privés
 7. Recherche avancée
 8. Archives des thèmes passés
 9. Partage externe vers réseaux sociaux
 10. Classement mensuel/annuel
 
-### Priorité basse (fonctionnalités "nice to have")
+**Priorité basse** (fonctionnalités "nice to have") :
 11. Défis spéciaux hebdomadaires
-14. Forum communautaire
+12. Forum communautaire
+13. Système de modération avancé
+14. Statistiques avancées du profil
 
-- Système de report de contenu inapproprié
-- Modération (automatique et manuelle)
-- Guidelines de la communauté
-- Espace FAQ/tutoriels
+---
+
+*Document mis à jour le 2025-10-20*

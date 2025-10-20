@@ -2,10 +2,12 @@ import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
 import 'package:inkstreak/data/models/user_models.dart';
 import 'package:inkstreak/data/services/api_service.dart';
+import 'package:inkstreak/main.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
@@ -149,18 +151,18 @@ class NotificationService {
   /// Register FCM token with backend
   Future<void> _registerTokenWithBackend(String token) async {
     try {
-      String platform = 'unknown';
+      String deviceId = 'unknown';
       if (kIsWeb) {
-        platform = 'web';
+        deviceId = 'web';
       } else if (Platform.isAndroid) {
-        platform = 'android';
+        deviceId = 'android';
       } else if (Platform.isIOS) {
-        platform = 'ios';
+        deviceId = 'ios';
       }
 
       final request = RegisterTokenRequest(
-        fcmToken: token,
-        platform: platform,
+        token: token,
+        deviceId: deviceId,
       );
 
       await _apiService.registerFCMToken(request);
@@ -230,13 +232,67 @@ class NotificationService {
   /// Handle notification tap
   Future<void> _handleNotificationTap(NotificationResponse response) async {
     debugPrint('Notification tapped: ${response.payload}');
-    // TODO: Navigate to appropriate screen based on notification type
+    // Parse payload string back to map (payload is stored as string)
+    // For local notifications, we pass the RemoteMessage data as string
+    // This is a simplified handler - in production you'd parse the payload properly
+    // For now, we'll mainly rely on _handleNotificationOpenedApp for FCM messages
   }
 
   /// Handle notification that opened the app
   void _handleNotificationOpenedApp(RemoteMessage message) {
     debugPrint('Handling notification that opened app: ${message.data}');
-    // TODO: Navigate to appropriate screen based on notification type
+
+    final context = navigatorKey.currentContext;
+    if (context == null) {
+      debugPrint('Navigator context is null, cannot navigate');
+      return;
+    }
+
+    final data = message.data;
+    final type = data['type'] as String?;
+
+    if (type == null) {
+      debugPrint('Notification type is null, ignoring');
+      return;
+    }
+
+    // Navigate based on notification type
+    switch (type) {
+      case 'follower':
+        // Navigate to feed where user can see new follower
+        // TODO: When UserProfileScreen is implemented, navigate to /profile/:username
+        final fromUsername = data['fromUsername'] as String?;
+        debugPrint('New follower notification from: $fromUsername');
+        context.go('/feed');
+        break;
+
+      case 'yeah':
+        // Navigate to feed to see the post that got a yeah
+        final postId = data['postId'] as String?;
+        debugPrint('Yeah notification for post: $postId');
+        context.go('/feed');
+        break;
+
+      case 'comment':
+        // Navigate to feed to see the post with new comment
+        final postId = data['postId'] as String?;
+        final commentId = data['commentId'] as String?;
+        debugPrint('Comment notification for post: $postId, comment: $commentId');
+        context.go('/feed');
+        break;
+
+      case 'daily_reminder':
+        // Navigate to upload screen for daily reminder
+        final reminderType = data['reminderType'] as String?;
+        final themeName = data['themeName'] as String?;
+        debugPrint('Daily reminder ($reminderType) for theme: $themeName');
+        context.go('/upload');
+        break;
+
+      default:
+        debugPrint('Unknown notification type: $type');
+        context.go('/home');
+    }
   }
 
   /// Schedule daily reminder notifications
@@ -351,7 +407,9 @@ class NotificationService {
   /// Unregister FCM token
   Future<void> unregisterToken() async {
     try {
-      await _apiService.unregisterFCMToken();
+      if (_fcmToken != null) {
+        await _apiService.unregisterFCMToken({'token': _fcmToken!});
+      }
       await _firebaseMessaging.deleteToken();
       debugPrint('FCM token unregistered');
     } catch (e) {

@@ -161,9 +161,9 @@ abstract class ApiService {
     @Body() UpdateNotificationSettingsRequest request,
   );
 
-  /// DELETE /notifications/token - Unregister FCM token
-  @DELETE("/notifications/token")
-  Future<RegisterTokenResponse> unregisterFCMToken();
+  /// DELETE /notifications/unregister-token - Unregister FCM token
+  @DELETE("/notifications/unregister-token")
+  Future<RegisterTokenResponse> unregisterFCMToken(@Body() Map<String, String> body);
 
   // ============================================================================
   // Health Check Endpoint

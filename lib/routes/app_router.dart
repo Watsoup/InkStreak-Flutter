@@ -102,6 +102,19 @@ class AppRouter {
           ],
         ),
         GoRoute(
+          path: '/profile/:username',
+          name: 'profile-view',
+          pageBuilder: (context, state) {
+            // For now, navigate to home/feed since ProfileScreen only shows auth user
+            // TODO: Create a separate UserProfileScreen that can display any user's profile
+            // final username = state.pathParameters['username'];
+            return MaterialPage(
+              key: state.pageKey,
+              child: const MainNavigationScreen(initialPage: 2), // Feed page
+            );
+          },
+        ),
+        GoRoute(
           path: '/settings',
           name: 'settings',
           pageBuilder: (context, state) => MaterialPage(
