@@ -26,7 +26,7 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Spécifications :**
 - [x] Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
 - [x] Affichage du thème du jour dès l'ouverture de l'application
-- [ ] Notification push pour annoncer le nouveau thème
+- [x] Notification push pour annoncer le nouveau thème
 - [x] Thème défini aléatoirement parmi une immense liste
 - [x] Langue des thèmes / de l'app : Anglais par défaut
 
@@ -56,7 +56,7 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
   - [x] Aléatoire (découverte)
 - [ ] Rafraîchissement manuel (onLoad ou scrollUp)
 - [x] Scroll infini
-- [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah"
+- [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah" (à voir si c'est gardé)
 
 ### 2.4 Système de "Yeah"
 
@@ -152,24 +152,21 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - [x] Authentification simple
 
 ### Phase 2 - Enrichissement
-- [ ] Système de suivi utilisateurs
+- [x] Notifications enrichies
 - [ ] Commentaires
-- [ ] Badges et achievements
-- [ ] Notifications enrichies
+- [ ] Système de suivi utilisateurs
 - [ ] Partage externe
 
 ### Phase 3 - Communauté avancée
-- [ ] Messagerie privée
-- [ ] Défis spéciaux
 - [x] Classements
 - [ ] Section Explorer
-- [ ] Modération avancée
 
 ## 7. Fonctionnalités bonus et améliorations futures
 
 ### 7.1 Gamification avancée
 
 **Badges et achievements :**
+- [ ] Modération avancée
 - [ ] Badges de participation (7 jours, 30 jours, 100 jours, 365 jours)
 - [ ] Achievements spéciaux :
   - [ ] Premier "Yeah" reçu

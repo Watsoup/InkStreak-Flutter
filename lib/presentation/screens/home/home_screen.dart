@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   slivers: [
                     // Collapsing SliverAppBar with Theme
                     SliverAppBar(
-                      expandedHeight: 220.0,
+                      expandedHeight: 264.0,
                       floating: false,
                       pinned: true,
                       snap: false,
