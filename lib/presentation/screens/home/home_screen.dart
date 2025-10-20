@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
+import 'package:inkstreak/presentation/blocs/comment/comment_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_state.dart';
@@ -11,6 +12,7 @@ import 'package:inkstreak/presentation/blocs/theme/theme_event.dart';
 import 'package:inkstreak/presentation/blocs/theme/theme_state.dart';
 import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
+import 'package:inkstreak/presentation/screens/comments/comments_bottom_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isInPageView;
@@ -25,8 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load theme on init
-    context.read<ThemeBloc>().add(const ThemeLoadRequested());
+    // Load theme after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ThemeBloc>().add(const ThemeLoadRequested());
+      }
+    });
   }
 
   @override
@@ -256,10 +262,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                         );
                                   },
                                   onCommentTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Comments feature coming soon!'),
-                                        duration: Duration(seconds: 1),
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (bottomSheetContext) => MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider.value(value: context.read<CommentBloc>()),
+                                          BlocProvider.value(value: context.read<PostBloc>()),
+                                        ],
+                                        child: CommentsBottomSheet(
+                                          postId: int.parse(post.id),
+                                          postAuthor: post.username,
+                                        ),
                                       ),
                                     );
                                   },

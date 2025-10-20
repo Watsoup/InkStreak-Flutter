@@ -39,3 +39,16 @@ class PostYeahToggled extends PostEvent {
   @override
   List<Object?> get props => [postId];
 }
+
+class PostCommentCountUpdated extends PostEvent {
+  final String postId;
+  final int commentCount;
+
+  const PostCommentCountUpdated({
+    required this.postId,
+    required this.commentCount,
+  });
+
+  @override
+  List<Object?> get props => [postId, commentCount];
+}

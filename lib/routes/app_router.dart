@@ -7,6 +7,7 @@ import 'package:inkstreak/presentation/screens/auth/login_screen.dart';
 import 'package:inkstreak/presentation/screens/main/main_navigation_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
+import 'package:inkstreak/presentation/screens/profile/user_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/settings/settings_screen.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
 
@@ -105,12 +106,10 @@ class AppRouter {
           path: '/profile/:username',
           name: 'profile-view',
           pageBuilder: (context, state) {
-            // For now, navigate to home/feed since ProfileScreen only shows auth user
-            // TODO: Create a separate UserProfileScreen that can display any user's profile
-            // final username = state.pathParameters['username'];
+            final username = state.pathParameters['username']!;
             return MaterialPage(
               key: state.pageKey,
-              child: const MainNavigationScreen(initialPage: 2), // Feed page
+              child: UserProfileScreen(username: username),
             );
           },
         ),

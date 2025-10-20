@@ -54,7 +54,7 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - [x] Possibilité de trier par :
   - [x] Plus populaires
   - [x] Aléatoire (découverte)
-- [ ] Rafraîchissement manuel (onLoad ou scrollUp)
+- [x] Rafraîchissement manuel (onLoad ou scrollUp)
 - [x] Scroll infini
 - [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah" (à voir si c'est gardé)
 
@@ -153,8 +153,8 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 
 ### Phase 2 - Enrichissement
 - [x] Notifications enrichies
-- [ ] Commentaires
-- [ ] Système de suivi utilisateurs
+- [x] Commentaires
+- [x] Système de suivi utilisateurs
 - [x] Partage externe
 
 ### Phase 3 - Communauté avancée

@@ -18,6 +18,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final ApiService _apiService;
   int? _currentUserId;
 
+  // Cache comment counts to persist across reloads
+  final Map<String, int> _commentCountCache = {};
+
   PostBloc()
       : _apiService = ApiService(DioClient.createDio()),
         super(const PostInitial()) {
@@ -25,6 +28,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<PostRefreshRequested>(_onPostRefreshRequested);
     on<PostLoadByFilter>(_onPostLoadByFilter);
     on<PostYeahToggled>(_onPostYeahToggled);
+    on<PostCommentCountUpdated>(_onPostCommentCountUpdated);
     _loadCurrentUserId();
   }
 
@@ -191,14 +195,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       if (event.feedType == FeedType.everyone) {
         apiPosts = await _apiService.getAllPosts();
       } else {
-        // Get current username from storage
-        final storage = await StorageService.getInstance();
-        final username = await storage.read(key: 'username');
-        if (username == null) {
-          emit(const PostError(message: 'User not logged in'));
-          return;
-        }
-        apiPosts = await _apiService.getFollowedPosts(username);
+        // Get feed of followed users (uses authentication token)
+        apiPosts = await _apiService.getFeed();
       }
 
       // Apply time period filter
@@ -295,15 +293,42 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
+  Future<void> _onPostCommentCountUpdated(
+    PostCommentCountUpdated event,
+    Emitter<PostState> emit,
+  ) async {
+    if (state is! PostLoaded) return;
+
+    final currentState = state as PostLoaded;
+
+    // Cache the comment count so it persists across reloads
+    _commentCountCache[event.postId] = event.commentCount;
+
+    // Update the comment count for the specific post
+    final updatedPosts = currentState.posts.map((post) {
+      if (post.id == event.postId) {
+        return post.copyWith(commentCount: event.commentCount);
+      }
+      return post;
+    }).toList();
+
+    emit(PostLoaded(posts: updatedPosts));
+  }
+
   Post _convertApiPostToUiPost(api_models.Post apiPost) {
-    // API now returns: author{id, username, profilePicture}, themeName, yeahs[]
+    // API now returns: author{id, username, profilePicture}, themeName, yeahs[], commentCount
     // Check if current user has yeahed this post
     final isYeahed = _currentUserId != null && apiPost.yeahs.contains(_currentUserId);
 
-    debugPrint('Converting post ${apiPost.id}: currentUserId=$_currentUserId, yeahs=${apiPost.yeahs}, isYeahed=$isYeahed');
+    final postId = apiPost.id.toString();
+
+    // Use cached comment count if available (user opened comments), otherwise use API count
+    final commentCount = _commentCountCache[postId] ?? apiPost.commentCount;
+
+    debugPrint('Converting post ${apiPost.id}: currentUserId=$_currentUserId, yeahs=${apiPost.yeahs}, isYeahed=$isYeahed, commentCount=$commentCount (cached: ${_commentCountCache[postId]}, api: ${apiPost.commentCount})');
 
     return Post(
-      id: apiPost.id.toString(),
+      id: postId,
       userId: apiPost.author.id.toString(),
       username: apiPost.author.username,
       avatarUrl: apiPost.author.profilePicture,
@@ -311,7 +336,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       caption: apiPost.caption,
       theme: apiPost.themeName,
       yeahCount: apiPost.yeahCount,
-      commentCount: 0, // API doesn't include comments in list view
+      commentCount: commentCount,
       createdAt: apiPost.createdAt,
       streakDay: apiPost.artistStreak,
       isYeahed: isYeahed,

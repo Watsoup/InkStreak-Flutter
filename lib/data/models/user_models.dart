@@ -153,6 +153,7 @@ class User {
 @JsonSerializable()
 class FollowResponse {
   final bool success;
+  @JsonKey(name: 'follows')
   final bool isFollowing;
 
   FollowResponse({
@@ -166,6 +167,7 @@ class FollowResponse {
 
 @JsonSerializable()
 class IsFollowingResponse {
+  @JsonKey(name: 'follows')
   final bool isFollowing;
 
   IsFollowingResponse({required this.isFollowing});
@@ -273,6 +275,10 @@ class Post {
   final int yeahCount;
   @JsonKey(defaultValue: [])
   final List<int> yeahs; // Array of user IDs who yeahed
+  @JsonKey(defaultValue: 0)
+  final int commentCount;
+  @JsonKey(defaultValue: [])
+  final List<Comment> comments; // Array of comments
   final DateTime createdAt;
   @JsonKey(defaultValue: 1)
   final int artistStreak;
@@ -285,6 +291,8 @@ class Post {
     this.themeName,
     this.yeahCount = 0,
     this.yeahs = const [],
+    this.commentCount = 0,
+    this.comments = const [],
     required this.createdAt,
     this.artistStreak = 1,
   });
@@ -295,18 +303,23 @@ class Post {
 
 @JsonSerializable()
 class Comment {
-  final String username;
+  final int? id;
+  final AuthorInfo author;
   final String content;
   final DateTime createdAt;
 
   Comment({
-    required this.username,
+    this.id,
+    required this.author,
     required this.content,
     required this.createdAt,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
   Map<String, dynamic> toJson() => _$CommentToJson(this);
+
+  // Helper getter for backward compatibility
+  String get username => author.username;
 }
 
 @JsonSerializable()

@@ -89,6 +89,10 @@ abstract class ApiService {
   @GET("/posts/followed/{username}")
   Future<List<Post>> getFollowedPosts(@Path("username") String username);
 
+  /// GET /posts/feed - Get feed of posts from followed users (requires authentication)
+  @GET("/posts/feed")
+  Future<List<Post>> getFeed();
+
   /// POST /posts/{id}/yeah - Toggle a "yeah" (like) for a post
   @POST("/posts/{id}/yeah")
   Future<Post> toggleYeah(@Path("id") int id);
@@ -99,6 +103,10 @@ abstract class ApiService {
     @Path("id") int id,
     @Body() AddCommentRequest request,
   );
+
+  /// GET /posts/{id}/comments - Get all comments for a post
+  @GET("/posts/{id}/comments")
+  Future<List<Comment>> getComments(@Path("id") int id);
 
   // ============================================================================
   // Theme Endpoints

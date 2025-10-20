@@ -115,24 +115,24 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
 FollowResponse _$FollowResponseFromJson(Map<String, dynamic> json) =>
     FollowResponse(
       success: json['success'] as bool,
-      isFollowing: json['isFollowing'] as bool,
+      isFollowing: json['follows'] as bool,
     );
 
 Map<String, dynamic> _$FollowResponseToJson(FollowResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
-      'isFollowing': instance.isFollowing,
+      'follows': instance.isFollowing,
     };
 
 IsFollowingResponse _$IsFollowingResponseFromJson(Map<String, dynamic> json) =>
     IsFollowingResponse(
-      isFollowing: json['isFollowing'] as bool,
+      isFollowing: json['follows'] as bool,
     );
 
 Map<String, dynamic> _$IsFollowingResponseToJson(
         IsFollowingResponse instance) =>
     <String, dynamic>{
-      'isFollowing': instance.isFollowing,
+      'follows': instance.isFollowing,
     };
 
 Message _$MessageFromJson(Map<String, dynamic> json) => Message(
@@ -222,6 +222,11 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
               ?.map((e) => (e as num).toInt())
               .toList() ??
           [],
+      commentCount: (json['commentCount'] as num?)?.toInt() ?? 0,
+      comments: (json['comments'] as List<dynamic>?)
+              ?.map((e) => Comment.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       createdAt: DateTime.parse(json['createdAt'] as String),
       artistStreak: (json['artistStreak'] as num?)?.toInt() ?? 1,
     );
@@ -234,18 +239,22 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'themeName': instance.themeName,
       'yeahCount': instance.yeahCount,
       'yeahs': instance.yeahs,
+      'commentCount': instance.commentCount,
+      'comments': instance.comments,
       'createdAt': instance.createdAt.toIso8601String(),
       'artistStreak': instance.artistStreak,
     };
 
 Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
-      username: json['username'] as String,
+      id: (json['id'] as num?)?.toInt(),
+      author: AuthorInfo.fromJson(json['author'] as Map<String, dynamic>),
       content: json['content'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
-      'username': instance.username,
+      'id': instance.id,
+      'author': instance.author,
       'content': instance.content,
       'createdAt': instance.createdAt.toIso8601String(),
     };

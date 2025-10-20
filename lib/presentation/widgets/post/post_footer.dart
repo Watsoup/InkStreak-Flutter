@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inkstreak/presentation/widgets/common/username_text.dart';
 
 class PostFooter extends StatelessWidget {
   final String? caption;
@@ -36,8 +37,8 @@ class PostFooter extends StatelessWidget {
                   ),
             )
           else
-            Text(
-              caption!,
+            MentionText(
+              text: caption!,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
         ],

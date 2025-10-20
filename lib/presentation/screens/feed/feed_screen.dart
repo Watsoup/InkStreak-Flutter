@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inkstreak/presentation/blocs/comment/comment_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_state.dart';
 import 'package:inkstreak/presentation/blocs/post/post_filters.dart';
 import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
+import 'package:inkstreak/presentation/screens/comments/comments_bottom_sheet.dart';
 
 class FeedScreen extends StatefulWidget {
   final bool isInPageView;
@@ -82,7 +84,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
               controller: _tabController,
               children: [
                 _buildPostsList(),
-                _buildComingSoon(),
+                _buildPostsList(), // Both tabs use the same list builder
               ],
             ),
           ),
@@ -206,37 +208,6 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildComingSoon() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.favorite_border,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Coming soon!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Follow your favorite artists and see\ntheir drawings here',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[500],
-                ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildPostsList() {
     return BlocBuilder<PostBloc, PostState>(
         builder: (context, state) {
@@ -319,10 +290,19 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                           );
                     },
                     onCommentTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Comments feature coming soon!'),
-                          duration: Duration(seconds: 1),
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (bottomSheetContext) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider.value(value: context.read<CommentBloc>()),
+                            BlocProvider.value(value: context.read<PostBloc>()),
+                          ],
+                          child: CommentsBottomSheet(
+                            postId: int.parse(post.id),
+                            postAuthor: post.username,
+                          ),
                         ),
                       );
                     },

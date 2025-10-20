@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:inkstreak/presentation/widgets/common/username_text.dart';
 
 class PostHeader extends StatelessWidget {
   final String username;
@@ -40,11 +41,9 @@ class PostHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  username,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                UsernameText(
+                  username: username,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
                   timeago.format(createdAt),
