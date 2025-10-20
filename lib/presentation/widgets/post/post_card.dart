@@ -9,12 +9,16 @@ class PostCard extends StatelessWidget {
   final Post post;
   final VoidCallback onYeahTap;
   final VoidCallback onCommentTap;
+  final VoidCallback onShareTap;
+  final bool isExporting;
 
   const PostCard({
     super.key,
     required this.post,
     required this.onYeahTap,
     required this.onCommentTap,
+    required this.onShareTap,
+    this.isExporting = false,
   });
 
   @override
@@ -41,6 +45,8 @@ class PostCard extends StatelessWidget {
             commentCount: post.commentCount,
             onYeahTap: onYeahTap,
             onCommentTap: onCommentTap,
+            onShareTap: onShareTap,
+            isExporting: isExporting,
           ),
           PostFooter(
             caption: post.caption,

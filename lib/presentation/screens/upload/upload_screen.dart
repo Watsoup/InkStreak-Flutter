@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_bloc.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_event.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_state.dart';
+import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/upload/countdown_timer.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
@@ -202,6 +203,7 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
+// TODO: Check if this post can be yeahed/commented/shared from this screen
   Widget _buildPostedContent(BuildContext context, UploadReady state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,6 +219,7 @@ class _UploadScreenState extends State<UploadScreen> {
           post: state.todaysPost!,
           onYeahTap: () {},
           onCommentTap: () {},
+          onShareTap: () => PostHelper.sharePost(context, state.todaysPost!),
         ),
       ],
     );

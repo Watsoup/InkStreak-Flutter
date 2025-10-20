@@ -9,6 +9,7 @@ import 'package:inkstreak/presentation/blocs/post/post_state.dart';
 import 'package:inkstreak/presentation/blocs/theme/theme_bloc.dart';
 import 'package:inkstreak/presentation/blocs/theme/theme_event.dart';
 import 'package:inkstreak/presentation/blocs/theme/theme_state.dart';
+import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -262,6 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     );
                                   },
+                                  onShareTap: () => PostHelper.sharePost(context, post)
                                 );
                               },
                               childCount: postState.posts.length,

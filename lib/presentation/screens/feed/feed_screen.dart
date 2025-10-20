@@ -5,6 +5,7 @@ import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/post/post_state.dart';
 import 'package:inkstreak/presentation/blocs/post/post_filters.dart';
+import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -325,6 +326,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                         ),
                       );
                     },
+                    onShareTap: () => PostHelper.sharePost(context, post)
                   );
                 },
               ),

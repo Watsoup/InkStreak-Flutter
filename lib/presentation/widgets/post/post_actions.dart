@@ -8,6 +8,8 @@ class PostActions extends StatefulWidget {
   final int commentCount;
   final VoidCallback onYeahTap;
   final VoidCallback onCommentTap;
+  final VoidCallback onShareTap;
+  final bool isExporting;
 
   const PostActions({
     super.key,
@@ -16,6 +18,8 @@ class PostActions extends StatefulWidget {
     required this.commentCount,
     required this.onYeahTap,
     required this.onCommentTap,
+    required this.onShareTap,
+    this.isExporting = false,
   });
 
   @override
@@ -29,18 +33,22 @@ class _PostActionsState extends State<PostActions> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(milliseconds: 500));
+    if (!widget.isExporting) {
+      _confettiController = ConfettiController(duration: const Duration(milliseconds: 500));
+    }
   }
 
   @override
   void dispose() {
-    _confettiController.dispose();
+    if (!widget.isExporting) {
+      _confettiController.dispose();
+    }
     super.dispose();
   }
 
   void _handleYeahTap() {
-    // Only play confetti when yeahing (not unyeahing)
-    if (!widget.isYeahed) {
+    // Only play confetti when yeahing (not unyeahing) and not exporting
+    if (!widget.isYeahed && !widget.isExporting) {
       _confettiController.play();
     }
     widget.onYeahTap();
@@ -75,27 +83,28 @@ class _PostActionsState extends State<PostActions> {
                       },
                     ),
                   ),
-                  Positioned(
-                    left: 20,
-                    top: 10,
-                    child: ConfettiWidget(
-                      confettiController: _confettiController,
-                      blastDirection: -pi / 2, // upward
-                      emissionFrequency: 0.1,
-                      numberOfParticles: 5,
-                      gravity: 0.4,
-                      shouldLoop: false,
-                      maxBlastForce: 10,
-                      minBlastForce: 5,
-                      blastDirectionality: BlastDirectionality.explosive,
-                      colors: const [
-                        Color(0xFF32CD32), // Lime green
-                        Color(0xFF3FE03F),
-                        Color(0xFF28B828),
-                        Color(0xFF25A525),
-                      ],
+                  if (!widget.isExporting)
+                    Positioned(
+                      left: 20,
+                      top: 10,
+                      child: ConfettiWidget(
+                        confettiController: _confettiController,
+                        blastDirection: -pi / 2, // upward
+                        emissionFrequency: 0.1,
+                        numberOfParticles: 5,
+                        gravity: 0.4,
+                        shouldLoop: false,
+                        maxBlastForce: 10,
+                        minBlastForce: 5,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        colors: const [
+                          Color(0xFF32CD32), // Lime green
+                          Color(0xFF3FE03F),
+                          Color(0xFF28B828),
+                          Color(0xFF25A525),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
               Text(
@@ -120,15 +129,7 @@ class _PostActionsState extends State<PostActions> {
               ),
               const Spacer(),
               IconButton(
-                onPressed: () {
-                  // TODO: Implement share functionality
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Share feature coming soon!'),
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                },
+                onPressed: widget.onShareTap,
                 icon: Icon(
                   Icons.share_outlined,
                   color: Colors.grey[700],
