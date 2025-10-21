@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.4.0+1
+version: 2.5.0
 
 environment:
   sdk: ^3.9.2
@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   
   # State Management (BLoC)
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
   
   # Networking
@@ -41,7 +41,7 @@ dependencies:
   json_annotation: ^4.8.1
   
   # Navigation
-  go_router: ^13.0.0
+  go_router: ^16.2.5
   
   # Local Storage
   shared_preferences: ^2.2.0
@@ -54,14 +54,14 @@ dependencies:
   # UI Components
   flutter_svg: ^2.0.0
   google_fonts: ^6.1.0
-  confetti: ^0.7.0
+  confetti: ^0.8.0
 
   # Time Formatting
   timeago: ^3.6.0
   
   
   # Chat/Messaging
-  flutter_chat_ui: ^1.6.0
+  flutter_chat_ui: ^2.9.1
   
   # Calendar
   table_calendar: ^3.0.9
@@ -77,8 +77,8 @@ dependencies:
   firebase_messaging: ^16.0.3
 
   # Notifications
-  flutter_local_notifications: ^18.0.1
-  timezone: ^0.9.4
+  flutter_local_notifications: ^19.5.0
+  timezone: ^0.10.1
 
   # URL Launcher
   url_launcher: ^6.2.5
@@ -92,7 +92,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.0
-  retrofit_generator: ^8.0.0
+  retrofit_generator: ^10.0.6
   json_serializable: ^6.7.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -100,7 +100,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   change_app_package_name: ^1.5.0
 
 # For information on the generic Dart part of this file, see the

@@ -240,12 +240,16 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
         : null;
 
     Color textColor;
+    Color textColorOnImage;
     Color? backgroundColor;
     Color? borderColor;
 
+    // Text on images is always white for visibility over the dark overlay
+    textColorOnImage = Colors.white;
+
     if (isToday) {
-      textColor = Colors.white;
-      backgroundColor = hasPost ? null : theme.colorScheme.primary.withValues(alpha: 0.3);
+      textColor = hasPost ? Colors.white : theme.colorScheme.onPrimaryContainer;
+      backgroundColor = hasPost ? null : theme.colorScheme.primaryContainer;
       borderColor = theme.colorScheme.primary;
     } else if (isDisabled || !hasPost) {
       textColor = theme.colorScheme.onSurface.withValues(alpha: 0.3);
@@ -256,7 +260,7 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
       backgroundColor = null;
       borderColor = null;
     } else {
-      textColor = Colors.white;
+      textColor = theme.colorScheme.onSurface;
       backgroundColor = null;
       borderColor = null;
     }
@@ -323,7 +327,7 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
                         Text(
                           '${day.day}',
                           style: TextStyle(
-                            color: textColor,
+                            color: textColorOnImage,
                             fontWeight: FontWeight.bold,
                             fontSize: 11,
                             shadows: [

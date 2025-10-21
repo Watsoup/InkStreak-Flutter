@@ -388,11 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('About'),
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('About coming soon!'),
-                ),
-              );
+              context.push('/about');
             },
           ),
           const Divider(),

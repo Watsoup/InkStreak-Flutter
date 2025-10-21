@@ -9,6 +9,7 @@ import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/user_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/settings/settings_screen.dart';
+import 'package:inkstreak/presentation/screens/about/about_screen.dart';
 import 'package:inkstreak/presentation/screens/calendar/day_posts_screen.dart';
 import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
@@ -121,6 +122,14 @@ class AppRouter {
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             child: const SettingsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/about',
+          name: 'about',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const AboutScreen(),
           ),
         ),
         GoRoute(
