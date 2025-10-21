@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:inkstreak/core/constants/constants.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:inkstreak/core/utils/storage_service.dart';
@@ -428,10 +429,18 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
 
           // About Section
           _buildSectionHeader(context, 'About'),
-          ListTile(
+            ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('Version'),
-            subtitle: const Text('2.0.2'),
+            subtitle: FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('${snapshot.data!.version}+${snapshot.data!.buildNumber}');
+              }
+              return const Text('Loading...');
+              },
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),

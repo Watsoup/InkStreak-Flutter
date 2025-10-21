@@ -7,6 +7,8 @@ import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/blocs/follow/follow_bloc.dart';
 import 'package:inkstreak/presentation/blocs/follow/follow_event.dart';
 import 'package:inkstreak/presentation/blocs/follow/follow_state.dart';
+import 'package:inkstreak/presentation/blocs/calendar/calendar_bloc.dart';
+import 'package:inkstreak/presentation/widgets/calendar/profile_calendar_widget.dart';
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:dio/dio.dart';
@@ -382,6 +384,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 24),
+                Text(
+                  'Calendar',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 16),
+                BlocProvider(
+                  create: (context) => CalendarBloc(),
+                  child: ProfileCalendarWidget(
+                    username: widget.username,
+                  ),
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),

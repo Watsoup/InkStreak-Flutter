@@ -7,6 +7,8 @@ import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'package:inkstreak/presentation/blocs/profile/profile_bloc.dart';
 import 'package:inkstreak/presentation/blocs/profile/profile_event.dart';
 import 'package:inkstreak/presentation/blocs/profile/profile_state.dart';
+import 'package:inkstreak/presentation/blocs/calendar/calendar_bloc.dart';
+import 'package:inkstreak/presentation/widgets/calendar/profile_calendar_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -197,33 +199,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                             ),
                             const SizedBox(height: 16),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(32.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_month,
-                                      size: 64,
-                                      color: Colors.grey[400],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'Calendar coming soon!',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            BlocProvider(
+                              create: (context) => CalendarBloc(),
+                              child: ProfileCalendarWidget(
+                                username: user.username,
                               ),
                             ),
+                            const SizedBox(height: 24),
                           ],
                         ),
                       ),

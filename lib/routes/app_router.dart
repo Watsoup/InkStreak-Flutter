@@ -9,6 +9,8 @@ import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/user_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/settings/settings_screen.dart';
+import 'package:inkstreak/presentation/screens/calendar/day_posts_screen.dart';
+import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
 
 class AppRouter {
@@ -120,6 +122,23 @@ class AppRouter {
             key: state.pageKey,
             child: const SettingsScreen(),
           ),
+        ),
+        GoRoute(
+          path: '/day-posts',
+          name: 'day-posts',
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final date = extra['date'] as DateTime;
+            final posts = extra['posts'] as List<Post>;
+
+            return MaterialPage(
+              key: state.pageKey,
+              child: DayPostsScreen(
+                date: date,
+                posts: posts,
+              ),
+            );
+          },
         ),
         // Redirect root to home (will be redirected to login if not authenticated)
         GoRoute(
