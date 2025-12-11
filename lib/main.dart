@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/profile/profile_bloc.dart';
+import 'package:inkstreak/presentation/blocs/search/search_bloc.dart';
 import 'package:inkstreak/presentation/blocs/theme/theme_bloc.dart';
 import 'package:inkstreak/presentation/blocs/app_theme/app_theme_bloc.dart';
 import 'package:inkstreak/presentation/blocs/app_theme/app_theme_event.dart';
@@ -51,6 +52,9 @@ class InkStreakApp extends StatelessWidget {
         BlocProvider(create: (context) => appThemeBloc),
         BlocProvider(create: (context) => CommentBloc()),
         BlocProvider(create: (context) => FollowBloc()),
+        BlocProvider(
+          create: (context) => SearchBloc(),
+        ),
       ],
       child: BlocBuilder<AppThemeBloc, AppThemeState>(
         buildWhen: (previous, current) => previous.isDarkMode != current.isDarkMode,

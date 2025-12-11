@@ -66,6 +66,12 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
               centerTitle: false,
               automaticallyImplyLeading: false,
               bottom: _buildTabBar(),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () => context.go('/search'),
+                ),
+              ],
             )
           : AppBar(
               title: const Text('Community'),

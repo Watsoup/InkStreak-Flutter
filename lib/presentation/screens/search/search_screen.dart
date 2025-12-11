@@ -63,7 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
         title: const Text('Search'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/feed'),
         ),
       ),
       body: Column(
