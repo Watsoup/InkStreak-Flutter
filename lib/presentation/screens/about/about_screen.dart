@@ -61,7 +61,6 @@ class _AboutScreenState extends State<AboutScreen> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -71,10 +70,14 @@ class _AboutScreenState extends State<AboutScreen> {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      Icons.brush,
-                      size: 60,
-                      color: theme.colorScheme.onPrimary,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        'assets/images/app_icon.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

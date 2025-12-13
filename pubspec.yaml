@@ -118,6 +118,7 @@ flutter:
   assets:
     - assets/images/yeah_active.png
     - assets/images/yeah_inactive.png
+    - assets/images/app_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

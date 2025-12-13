@@ -1,4 +1,5 @@
 # Cahier des charges - InkStreak
+Application pour le cours de AdMoApp en Master HES-SO, réalisé par Gabriel Marino Jarrin et Jad Tayan
 
 ## 1. Présentation du projet
 
@@ -24,38 +25,38 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Description :** Un thème de dessin est imposé chaque jour à tous les utilisateurs.
 
 **Spécifications :**
-- [x] Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
-- [x] Affichage du thème du jour dès l'ouverture de l'application
-- [x] Notification push pour annoncer le nouveau thème
-- [x] Thème défini aléatoirement parmi une immense liste
-- [x] Langue des thèmes / de l'app : Anglais par défaut
+- [ ] Génération automatique d'un nouveau thème chaque jour à minuit (Zurich)
+- [ ] Affichage du thème du jour dès l'ouverture de l'application
+- [ ] Notification push pour annoncer le nouveau thème
+- [ ] Thème défini aléatoirement parmi une immense liste
+- [ ] Langue des thèmes / de l'app : Anglais par défaut
 
 ### 2.2 Import de dessin
 
 **Description :** Les utilisateurs peuvent uploader leur dessin jusqu'à minuit.
 
 **Spécifications :**
-- [x] Deux méthodes d'import :
-  - [x] Photo depuis l'appareil photo (capture directe)
-  - [x] Import depuis la galerie de l'appareil
-- [x] Formats acceptés : JPEG, PNG, HEIC
-- [x] Taille maximale du fichier : 10-20 MB, compresser si besoin
-- [x] Un seul dessin par utilisateur par jour
-- [x] Deadline : minuit (Zurich)
+- [ ] Deux méthodes d'import :
+  - [ ] Photo depuis l'appareil photo (capture directe)
+  - [ ] Import depuis la galerie de l'appareil
+- [ ] Formats acceptés : JPEG, PNG, HEIC
+- [ ] Taille maximale du fichier : 10-20 MB, compresser si besoin
+- [ ] Un seul dessin par utilisateur par jour
+- [ ] Deadline : minuit (Zurich)
 
 ### 2.3 Feed principal
 
 **Description :** Affichage des dessins de la journée, triés par popularité.
 
 **Spécifications :**
-- [x] Tri par défaut : Posts les plus récents
-- [x] Affichage : Liste façon Instagram
-- [x] Informations visibles : pseudo de l'artiste, nombre de "Yeah", description, commentaires
-- [x] Possibilité de trier par :
-  - [x] Plus populaires
-  - [x] Aléatoire (découverte)
-- [x] Rafraîchissement manuel (onLoad ou scrollUp)
-- [x] Scroll infini
+- [ ] Tri par défaut : Posts les plus récents
+- [ ] Affichage : Liste façon Instagram
+- [ ] Informations visibles : pseudo de l'artiste, nombre de "Yeah", description, commentaires
+- [ ] Possibilité de trier par :
+  - [ ] Plus populaires
+  - [ ] Aléatoire (découverte)
+- [ ] Rafraîchissement manuel (onLoad ou scrollUp)
+- [ ] Scroll infini
 - [ ] Il faut avoir publié une image aujourd'hui pour pouvoir mettre des "Yeah" (à voir si c'est gardé)
 
 ### 2.4 Système de "Yeah"
@@ -63,30 +64,30 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Description :** Mécanisme de vote/like pour les dessins.
 
 **Spécifications :**
-- [x] Un "Yeah" = un vote positif
+- [ ] Un "Yeah" = un vote positif
 - [ ] Limite : un "Yeah" par utilisateur par dessin, disponible si l'utilisateur a fait un dessin aujourd'hui
-- [x] Compteur visible en temps réel
-- [x] Possibilité de retirer son "Yeah"
-- [x] Historique des "Yeah" reçus pour chaque utilisateur
-- [x] Statistiques globales (total de "Yeah" reçus)
+- [ ] Compteur visible en temps réel
+- [ ] Possibilité de retirer son "Yeah"
+- [ ] Historique des "Yeah" reçus pour chaque utilisateur
+- [ ] Statistiques globales (total de "Yeah" reçus)
 
 ### 2.5 Profil utilisateur
 
 **Description :** Page personnelle de chaque utilisateur avec calendrier des participations.
 
 **Spécifications :**
-- [x] Informations du profil :
-  - [x] Pseudo
-  - [x] Photo de profil
-  - [x] Bio (description courte)
-  - [x] Date d'inscription
-  - [x] Statistiques (série actuelle, série maximale, total de dessins, total de Yeah)
+- [ ] Informations du profil :
+  - [ ] Pseudo
+  - [ ] Photo de profil
+  - [ ] Bio (description courte)
+  - [ ] Date d'inscription
+  - [ ] Statistiques (série actuelle, série maximale, total de dessins, total de Yeah)
 - [ ] Calendrier visuel :
   - [ ] Vue mensuelle avec miniatures des dessins
-  - [ ] Chaque case : miniature du dessin, jour (date), nb de Yeah
+  - [ ] Chaque case : miniature du dessin, jour (date),
   - [ ] Jours manqués clairement identifiables (miniature grisée, impossible d'agrandir)
   - [ ] Possibilité de naviguer entre les mois
-- [ ] Clic sur un jour = affichage du dessin en grand
+  - [ ] Clic sur un jour = affichage du dessin en grand
 
 ### 2.6 Interactions sociales
 
@@ -98,10 +99,10 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 ## 3. Spécifications techniques
 
 ### 3.1 Plateformes
-- [x] Android
-- [x] Linux
-- [x] Version web PWA
-- [x] iOS
+- [ ] Android
+- [ ] Linux
+- [ ] Version web PWA
+- [ ] iOS
 
 ### 3.2 Architecture technique
 - **Backend :** API RESTful (Hono)
@@ -109,13 +110,13 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 - **Stockage des images :** Bucket R2 Cloudflare
 - **Notifications push :** Firebase Cloud Messaging
 - **Authentification :**
-  - [x] Username / mot de passe
-  - [x] Discord OAuth
+  - [ ] Username / mot de passe
+  - [ ] Discord OAuth
 
 ### 3.3 Sécurité
-- [x] Chiffrement des données en transit (HTTPS)
-- [x] Aucune donnée sensible (mot de passe chiffré SHA256)
-- [x] Authentification sécurisée (token, refresh token)
+- [ ] Chiffrement des données en transit (HTTPS)
+- [ ] Aucune donnée sensible (mot de passe chiffré SHA256)
+- [ ] Authentification sécurisée (token, refresh token)
 
 ## 4. Contraintes et règles métier
 
@@ -144,21 +145,21 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 ## 6. Planning et phases
 
 ### Phase 1 - MVP (Minimum Viable Product)
-- [x] Système de thème quotidien
-- [x] Upload de dessin (photo/galerie)
-- [x] Feed avec tri par "Yeah"
-- [x] Système de "Yeah"
+- [ ] Système de thème quotidien
+- [ ] Upload de dessin (photo/galerie)
+- [ ] Feed avec tri par "Yeah"
+- [ ] Système de "Yeah"
 - [ ] Profil avec calendrier basique
-- [x] Authentification simple
+- [ ] Authentification simple
 
 ### Phase 2 - Enrichissement
-- [x] Notifications enrichies
-- [x] Commentaires
-- [x] Système de suivi utilisateurs
-- [x] Partage externe
+- [ ] Notifications enrichies
+- [ ] Commentaires
+- [ ] Système de suivi utilisateurs
+- [ ] Partage externe
 
 ### Phase 3 - Communauté avancée
-- [x] Classements
+- [ ] Classements
 - [ ] Section Explorer
 
 ## 7. Fonctionnalités bonus et améliorations futures
@@ -178,12 +179,12 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Compétitions :**
 - [ ] Classement mensuel/annuel avec podium
 - [ ] Défis spéciaux hebdomadaires ou thématiques
-- [x] Affichage journalier sur Discord
+- [ ] Affichage journalier sur Discord
 
 ### 7.2 Découverte et inspiration
 
 **Section Explorer :**
-- [x] Dessins les plus populaires de tous les temps
+- [ ] Dessins les plus populaires de tous les temps
 - [ ] Sélection de la rédaction
 
 **Archives et recherche :**
@@ -198,12 +199,10 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 ### 7.3 Communauté et social avancé
 
 **Interactions enrichies :**
-- [ ] Messages privés entre utilisateurs
 - [ ] Notifications sociales :
   - [ ] Nouveau follower
   - [ ] Commentaire sur votre dessin
   - [ ] Mention dans un commentaire
-  - [ ] Message privé reçu
 - [ ] Partage externe vers autres réseaux sociaux (Instagram, Twitter, etc.)
 - [ ] Création de collections/favoris personnels
 - [ ] Système de tags personnalisés pour organiser ses dessins
@@ -247,8 +246,6 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 **Système de modération :**
 - [ ] Système de report par les utilisateurs
 - [ ] Modération automatique (IA) pour détecter contenu inapproprié
-- [ ] Modération manuelle pour les cas ambigus
-- [ ] Sanctions graduées (avertissement, suspension, bannissement)
 
 ### 7.7 Ordre de priorité suggéré (post-MVP)
 
@@ -260,18 +257,17 @@ InkStreak est un réseau social mobile dédié au dessin quotidien, inspiré du 
 5. Notifications sociales basiques
 
 **Priorité moyenne** (enrichit la plateforme) :
-6. Messages privés
-7. Recherche avancée
-8. Archives des thèmes passés
-9. Partage externe vers réseaux sociaux
-10. Classement mensuel/annuel
+6. Recherche avancée
+7. Archives des thèmes passés
+8. Partage externe vers réseaux sociaux
+9. Classement mensuel/annuel
 
 **Priorité basse** (fonctionnalités "nice to have") :
-11. Défis spéciaux hebdomadaires
-12. Forum communautaire
-13. Système de modération avancé
-14. Statistiques avancées du profil
+10. Défis spéciaux hebdomadaires
+11. Forum communautaire
+12. Système de modération avancé
+13. Statistiques avancées du profil
 
 ---
 
-*Document mis à jour le 2025-10-20*
+*Document mis à jour le 2025-10-27*
