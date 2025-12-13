@@ -92,7 +92,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       Emitter<SearchState> emit,
       ) async {
     try {
-      // Rechercher les utilisateurs qui correspondent
+      // Rechercher les users
       final users = await _apiService.searchUsers(event.query);
 
       // Créer des suggestions basées sur les usernames
@@ -119,16 +119,16 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   /// Recherche les posts selon les filtres
-  /// Utilise getAllPosts puis filtre côté client car l'API n'a pas de recherche avancée
+  /// Utilise getAllPosts puis filtre côté client
   Future<List<Post>> _searchPosts(SearchFilters filters) async {
-    // 1. Récupérer tous les posts si pas en cache
+    // Récupérer tous les posts si pas en cache
     if (_cachedPosts.isEmpty) {
       _cachedPosts = await _apiService.getAllPosts();
     }
 
     var filteredPosts = _cachedPosts;
 
-    // 2. Filtrer par username si spécifié
+    // Filtrer par username si spécifié
     if (filters.username != null && filters.username!.isNotEmpty) {
       filteredPosts = filteredPosts
           .where((p) => p.author.username.toLowerCase()
@@ -136,7 +136,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .toList();
     }
 
-    // 3. Filtrer par query (caption)
+    // Filtrer par query (caption)
     if (filters.query != null && filters.query!.isNotEmpty) {
       final query = filters.query!.toLowerCase();
       filteredPosts = filteredPosts.where((p) {
@@ -147,7 +147,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }).toList();
     }
 
-    // 4. Filtrer par thème
+    // Filtrer par thème
     if (filters.themeId != null && filters.themeId!.isNotEmpty) {
       // On suppose que themeId contient le nom du thème
       filteredPosts = filteredPosts
@@ -155,7 +155,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .toList();
     }
 
-    // 5. Filtrer par date
+    // Filtrer par date
     if (filters.startDate != null) {
       filteredPosts = filteredPosts
           .where((p) => p.createdAt.isAfter(filters.startDate!))
@@ -167,7 +167,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .toList();
     }
 
-    // 6. Filtrer par tags (si les tags sont dans la caption avec #)
+    // Filtrer par tags
     if (filters.tags.isNotEmpty) {
       filteredPosts = filteredPosts.where((p) {
         final caption = p.caption?.toLowerCase() ?? '';
@@ -175,7 +175,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }).toList();
     }
 
-    // 7. Appliquer le tri
+    // tri
     switch (filters.sortType) {
       case SearchSortType.relevance:
       // Pas de tri particulier (ordre de l'API)
@@ -191,11 +191,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         break;
     }
 
-    // 8. Convertir en UI Posts (réutilise ta méthode de PostBloc)
+    // Convertir en UI Posts
     return filteredPosts.map((apiPost) => _convertApiPostToUiPost(apiPost)).toList();
   }
 
-  /// Convertir API Post en UI Post (copie de PostBloc)
+  /// Convertir API Post en UI Post
   Post _convertApiPostToUiPost(api_models.Post apiPost) {
     return Post(
       id: apiPost.id.toString(),
@@ -209,7 +209,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       commentCount: apiPost.commentCount,
       createdAt: apiPost.createdAt,
       streakDay: apiPost.artistStreak,
-      isYeahed: false, // À adapter selon ton contexte
+      isYeahed: false,
     );
   }
 }

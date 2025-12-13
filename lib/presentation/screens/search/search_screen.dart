@@ -23,7 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _showSuggestions = false;
-  Timer? _debounceTimer;  // ⬅️ AJOUTE CETTE LIGNE
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -70,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
         // Lancer la recherche complète
         context.read<SearchBloc>().add(SearchQueryChanged(query));
 
-        // Optionnel: Lancer aussi les suggestions
+        // Lancer aussi les suggestions
         context.read<SearchBloc>().add(SearchSuggestionRequested(query));
       }
     });
@@ -91,7 +91,7 @@ class _SearchScreenState extends State<SearchScreen> {
           // Barre de recherche
           _buildSearchBar(),
 
-          // Chips des filtres actifs
+          // filtre chips
           BlocBuilder<SearchBloc, SearchState>(
             builder: (context, state) {
               if (state is SearchLoaded && state.appliedFilters.hasActiveFilters) {
@@ -187,15 +187,6 @@ class _SearchScreenState extends State<SearchScreen> {
               onSubmitted: _onSearchSubmitted,
             ),
           ),
-          /*
-          const SizedBox(width: 12),
-          // Bouton filtres avancés
-          IconButton.filled(
-            icon: const Icon(Icons.tune),
-            onPressed: () => _showAdvancedFilters(context),
-            tooltip: 'Advanced filters',
-          ),
-           */
         ],
       ),
     );
