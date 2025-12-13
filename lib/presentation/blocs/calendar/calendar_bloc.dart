@@ -6,7 +6,8 @@ import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
-import 'package:inkstreak/core/utils/storage_service.dart';
+import 'package:inkstreak/core/utils/user_id_provider.dart';
+import 'package:inkstreak/core/utils/post_mapper.dart';
 import 'package:inkstreak/core/constants/constants.dart';
 import 'dart:convert';
 import 'calendar_event.dart';
@@ -16,58 +17,19 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   final ApiService _apiService;
   int? _currentUserId;
 
-  CalendarBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  CalendarBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(CalendarState()) {
     on<CalendarMonthChanged>(_onMonthChanged);
     on<CalendarMonthIncremented>(_onMonthIncremented);
     on<CalendarMonthDecremented>(_onMonthDecremented);
     on<CalendarPostsLoadRequested>(_onPostsLoadRequested);
     on<CalendarDaySelected>(_onDaySelected);
-    _loadCurrentUserId();
+    _initUserId();
   }
 
-  Future<void> _loadCurrentUserId() async {
-    try {
-      final storage = await StorageService.getInstance();
-
-      // Try to get user ID from JWT token first
-      final token = await storage.read(key: AppConstants.tokenKey);
-      if (token != null) {
-        try {
-          final decodedToken = JwtDecoder.decode(token);
-          final userId = decodedToken['id'];
-
-          if (userId is int) {
-            _currentUserId = userId;
-            return;
-          } else if (userId is String) {
-            _currentUserId = int.tryParse(userId);
-            if (_currentUserId != null) {
-              return;
-            }
-          }
-        } catch (e) {
-          debugPrint('Failed to decode JWT token: $e');
-        }
-      }
-
-      // Fallback: try to get from stored user data
-      final userJson = await storage.read(key: AppConstants.userKey);
-      if (userJson != null) {
-        final userMap = jsonDecode(userJson) as Map<String, dynamic>;
-        final userId = userMap['id'];
-
-        if (userId is int) {
-          _currentUserId = userId;
-        } else if (userId is String) {
-          _currentUserId = int.tryParse(userId);
-        }
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Error loading current user ID: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
+  Future<void> _initUserId() async {
+    _currentUserId = await UserIdProvider.getCurrentUserId();
   }
 
   void _onMonthChanged(
@@ -110,9 +72,8 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       username: event.username,
     ));
 
-    // Ensure user ID is loaded before processing posts
     if (_currentUserId == null) {
-      await _loadCurrentUserId();
+      _currentUserId = await UserIdProvider.getCurrentUserId();
     }
 
     try {
@@ -134,8 +95,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
           apiPost.createdAt.day,
         );
 
-        // Convert API post to UI post
-        final post = _convertApiPostToUiPost(apiPost);
+        final post = PostMapper.fromApiPost(apiPost, currentUserId: _currentUserId);
 
         if (!postsByDate.containsKey(date)) {
           postsByDate[date] = [];
@@ -175,24 +135,4 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     emit(state.copyWith(selectedDay: event.day));
   }
 
-  Post _convertApiPostToUiPost(api_models.Post apiPost) {
-    // Check if current user has yeahed this post
-    final isYeahed =
-        _currentUserId != null && apiPost.yeahs.contains(_currentUserId);
-
-    return Post(
-      id: apiPost.id.toString(),
-      userId: apiPost.author.id.toString(),
-      username: apiPost.author.username,
-      avatarUrl: apiPost.author.profilePicture,
-      imageUrl: apiPost.picture,
-      caption: apiPost.caption,
-      theme: apiPost.themeName,
-      yeahCount: apiPost.yeahCount,
-      commentCount: apiPost.commentCount,
-      createdAt: apiPost.createdAt,
-      streakDay: apiPost.artistStreak,
-      isYeahed: isYeahed,
-    );
-  }
 }

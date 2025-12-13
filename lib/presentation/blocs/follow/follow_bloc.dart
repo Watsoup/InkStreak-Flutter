@@ -9,11 +9,10 @@ import 'follow_state.dart';
 class FollowBloc extends Bloc<FollowEvent, FollowState> {
   final ApiService _apiService;
 
-  // Cache follow status for each user to prevent flicker
   final Map<String, bool> _followStatusCache = {};
 
-  FollowBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  FollowBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const FollowInitial()) {
     on<FollowToggleRequested>(_onFollowToggleRequested);
     on<FollowStatusRequested>(_onFollowStatusRequested);

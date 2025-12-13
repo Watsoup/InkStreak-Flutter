@@ -5,6 +5,7 @@ import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
+import 'package:inkstreak/core/utils/post_mapper.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 import 'search_filters.dart';
@@ -14,8 +15,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   List<api_models.Post> _cachedPosts = [];
   List<api_models.User> _cachedUsers = [];
 
-  SearchBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  SearchBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const SearchInitial()) {
     on<SearchQueryChanged>(_onSearchQueryChanged);
     on<SearchFiltersApplied>(_onSearchFiltersApplied);
@@ -188,24 +189,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         break;
     }
 
-    // Conversions to ui posts
-    return filteredPosts.map((apiPost) => _convertApiPostToUiPost(apiPost)).toList();
-  }
-
-  Post _convertApiPostToUiPost(api_models.Post apiPost) {
-    return Post(
-      id: apiPost.id.toString(),
-      userId: apiPost.author.id.toString(),
-      username: apiPost.author.username,
-      avatarUrl: apiPost.author.profilePicture,
-      imageUrl: apiPost.picture,
-      caption: apiPost.caption,
-      theme: apiPost.themeName,
-      yeahCount: apiPost.yeahCount,
-      commentCount: apiPost.commentCount,
-      createdAt: apiPost.createdAt,
-      streakDay: apiPost.artistStreak,
-      isYeahed: false,
-    );
+    return filteredPosts.map((apiPost) => PostMapper.fromApiPost(apiPost)).toList();
   }
 }

@@ -10,8 +10,8 @@ import 'comment_state.dart';
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   final ApiService _apiService;
 
-  CommentBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  CommentBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const CommentInitial()) {
     on<CommentsLoadRequested>(_onCommentsLoadRequested);
     on<CommentAddRequested>(_onCommentAddRequested);

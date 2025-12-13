@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inkstreak/core/di/service_locator.dart';
+import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_bloc.dart';
@@ -95,7 +97,7 @@ class _HomeWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PostBloc()..add(const PostLoadRequested()),
+      create: (context) => PostBloc(apiService: getIt<ApiService>())..add(const PostLoadRequested()),
       child: const HomeScreen(isInPageView: true),
     );
   }
@@ -105,7 +107,7 @@ class _UploadWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UploadBloc()..add(const UploadCheckStatus()),
+      create: (context) => UploadBloc(apiService: getIt<ApiService>())..add(const UploadCheckStatus()),
       child: const UploadScreen(isInPageView: true),
     );
   }
@@ -115,7 +117,7 @@ class _FeedWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PostBloc()..add(const PostLoadRequested()),
+      create: (context) => PostBloc(apiService: getIt<ApiService>())..add(const PostLoadRequested()),
       child: const FeedScreen(isInPageView: true),
     );
   }

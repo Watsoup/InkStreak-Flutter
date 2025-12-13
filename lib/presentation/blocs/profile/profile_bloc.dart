@@ -17,8 +17,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ApiService _apiService;
   final AuthBloc _authBloc;
 
-  ProfileBloc({required AuthBloc authBloc})
-      : _apiService = ApiService(DioClient.createDio()),
+  ProfileBloc({required AuthBloc authBloc, required ApiService apiService})
+      : _apiService = apiService,
         _authBloc = authBloc,
         super(const ProfileInitial()) {
     on<ProfileLoadRequested>(_onProfileLoadRequested);

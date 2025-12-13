@@ -14,7 +14,7 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ApiService _apiService;
 
-  AuthBloc() : _apiService = ApiService(DioClient.createDio()), super(const AuthInitial()) {
+  AuthBloc({required ApiService apiService}) : _apiService = apiService, super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);

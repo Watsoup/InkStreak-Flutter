@@ -7,7 +7,8 @@ import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
-import 'package:inkstreak/core/utils/storage_service.dart';
+import 'package:inkstreak/core/utils/user_id_provider.dart';
+import 'package:inkstreak/core/utils/post_mapper.dart';
 import 'package:inkstreak/core/constants/constants.dart';
 import 'dart:math';
 import 'dart:convert';
@@ -22,63 +23,19 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   // Cache comment counts to persist across reloads
   final Map<String, int> _commentCountCache = {};
 
-  PostBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  PostBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const PostInitial()) {
     on<PostLoadRequested>(_onPostLoadRequested);
     on<PostRefreshRequested>(_onPostRefreshRequested);
     on<PostLoadByFilter>(_onPostLoadByFilter);
     on<PostYeahToggled>(_onPostYeahToggled);
     on<PostCommentCountUpdated>(_onPostCommentCountUpdated);
-    _loadCurrentUserId();
+    _initUserId();
   }
 
-  Future<void> _loadCurrentUserId() async {
-    try {
-      final storage = await StorageService.getInstance();
-
-      // Try to get user ID from JWT token first (most reliable)
-      final token = await storage.read(key: AppConstants.tokenKey);
-      if (token != null) {
-        try {
-          final decodedToken = JwtDecoder.decode(token);
-
-          final userId = decodedToken['id'];
-
-          if (userId is int) {
-            _currentUserId = userId;
-            return;
-          } else if (userId is String) {
-            _currentUserId = int.tryParse(userId);
-            if (_currentUserId != null) {
-              return;
-            }
-          }
-        } catch (e) {
-          debugPrint('Failed to decode JWT token: $e');
-        }
-      }
-
-      // Fallback: try to get from stored user data
-      final userJson = await storage.read(key: AppConstants.userKey);
-
-      if (userJson != null) {
-        final userMap = jsonDecode(userJson) as Map<String, dynamic>;
-
-        final userId = userMap['id'];
-
-        if (userId is int) {
-          _currentUserId = userId;
-        } else if (userId is String) {
-          _currentUserId = int.tryParse(userId);
-        } else {
-          debugPrint('WARNING: userId is neither int nor String, type: ${userId.runtimeType}');
-        }
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Error loading current user ID: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
+  Future<void> _initUserId() async {
+    _currentUserId = await UserIdProvider.getCurrentUserId();
   }
 
   Future<void> _onPostLoadRequested(
@@ -87,9 +44,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     emit(const PostLoading());
 
-    // Ensure user ID is loaded before processing posts
     if (_currentUserId == null) {
-      await _loadCurrentUserId();
+      _currentUserId = await UserIdProvider.getCurrentUserId();
     }
 
     try {
@@ -106,7 +62,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           .where((apiPost) =>
               apiPost.createdAt.isAfter(todayStart) &&
               apiPost.createdAt.isBefore(todayEnd))
-          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .map((apiPost) => PostMapper.fromApiPost(
+                apiPost,
+                currentUserId: _currentUserId,
+                commentCountCache: _commentCountCache,
+              ))
           .toList();
 
       emit(PostLoaded(posts: posts));
@@ -135,7 +95,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           .where((apiPost) =>
               apiPost.createdAt.isAfter(todayStart) &&
               apiPost.createdAt.isBefore(todayEnd))
-          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .map((apiPost) => PostMapper.fromApiPost(
+                apiPost,
+                currentUserId: _currentUserId,
+                commentCountCache: _commentCountCache,
+              ))
           .toList();
 
       emit(PostLoaded(posts: posts));
@@ -161,9 +125,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     emit(const PostLoading());
 
-    // Ensure user ID is loaded before processing posts
     if (_currentUserId == null) {
-      await _loadCurrentUserId();
+      _currentUserId = await UserIdProvider.getCurrentUserId();
     }
 
     try {
@@ -183,7 +146,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           .where((apiPost) =>
               apiPost.createdAt.isAfter(dateRange.start) &&
               apiPost.createdAt.isBefore(dateRange.end))
-          .map((apiPost) => _convertApiPostToUiPost(apiPost))
+          .map((apiPost) => PostMapper.fromApiPost(
+                apiPost,
+                currentUserId: _currentUserId,
+                commentCountCache: _commentCountCache,
+              ))
           .toList();
 
       // Apply sorting
@@ -248,7 +215,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           debugPrint('API response differs from optimistic update, syncing...');
           final finalPosts = updatedPosts.map((post) {
             if (post.id == event.postId) {
-              return _convertApiPostToUiPost(updatedPost);
+              return PostMapper.fromApiPost(
+                updatedPost,
+                currentUserId: _currentUserId,
+                commentCountCache: _commentCountCache,
+              );
             }
             return post;
           }).toList();
@@ -288,33 +259,5 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }).toList();
 
     emit(PostLoaded(posts: updatedPosts));
-  }
-
-  Post _convertApiPostToUiPost(api_models.Post apiPost) {
-    // API now returns: author{id, username, profilePicture}, themeName, yeahs[], commentCount
-    // Check if current user has yeahed this post
-    final isYeahed = _currentUserId != null && apiPost.yeahs.contains(_currentUserId);
-
-    final postId = apiPost.id.toString();
-
-    // Use cached comment count if available (user opened comments), otherwise use API count
-    final commentCount = _commentCountCache[postId] ?? apiPost.commentCount;
-
-    debugPrint('Converting post ${apiPost.id}: currentUserId=$_currentUserId, yeahs=${apiPost.yeahs}, isYeahed=$isYeahed, commentCount=$commentCount (cached: ${_commentCountCache[postId]}, api: ${apiPost.commentCount})');
-
-    return Post(
-      id: postId,
-      userId: apiPost.author.id.toString(),
-      username: apiPost.author.username,
-      avatarUrl: apiPost.author.profilePicture,
-      imageUrl: apiPost.picture,
-      caption: apiPost.caption,
-      theme: apiPost.themeName,
-      yeahCount: apiPost.yeahCount,
-      commentCount: commentCount,
-      createdAt: apiPost.createdAt,
-      streakDay: apiPost.artistStreak,
-      isYeahed: isYeahed,
-    );
   }
 }
