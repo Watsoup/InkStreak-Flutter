@@ -11,6 +11,8 @@ import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 //import 'package:inkstreak/presentation/screens/search/search_filters_sheet.dart';
 
 import '../../../data/models/post_models.dart';
+import '../../blocs/post/post_bloc.dart';
+import '../../blocs/post/post_event.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -65,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     // Créer un nouveau timer pour le debouncing
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {  // ⬅️ MODIFIÉ
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       if (query.length >= 2) {
         // Lancer la recherche complète
         context.read<SearchBloc>().add(SearchQueryChanged(query));
@@ -497,31 +499,19 @@ class _SearchScreenState extends State<SearchScreen> {
           return PostCard(
             post: post,
             onYeahTap: () {
-              // Handle yeah
+              context.read<PostBloc>().add(
+                PostYeahToggled(postId: post.id),
+              );
             },
             onCommentTap: () {
-              // Handle comment
+              context.push('/comments/${post.id}');
             },
             onShareTap: () {
-              // Handle share
+              // Share functionality will be handled by PostCard
             },
           );
         },
       ),
     );
   }
-/*
-  void _showAdvancedFilters(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (bottomSheetContext) => BlocProvider.value(
-        value: context.read<SearchBloc>(),
-        child: const SearchFiltersSheet(),
-      ),
-    );
-  }
-
- */
 }
