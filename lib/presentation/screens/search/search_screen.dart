@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _showSuggestions = false;
+  Timer? _debounceTimer;  // ⬅️ AJOUTE CETTE LIGNE
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
     _searchFocusNode.removeListener(_onFocusChange);
     _searchFocusNode.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -45,15 +49,31 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onSearchSubmitted(String query) {
     if (query.isNotEmpty) {
       _searchFocusNode.unfocus();
+      _debounceTimer?.cancel();
       context.read<SearchBloc>().add(SearchQueryChanged(query));
     }
   }
 
   void _onSearchChanged(String query) {
-    // Debouncing pour les suggestions
-    if (query.length >= 2) {
-      context.read<SearchBloc>().add(SearchSuggestionRequested(query));
+    // Annuler le timer précédent
+    _debounceTimer?.cancel();
+
+    // Si le champ est vide, nettoyer la recherche
+    if (query.isEmpty) {
+      context.read<SearchBloc>().add(const SearchCleared());
+      return;
     }
+
+    // Créer un nouveau timer pour le debouncing
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {  // ⬅️ MODIFIÉ
+      if (query.length >= 2) {
+        // Lancer la recherche complète
+        context.read<SearchBloc>().add(SearchQueryChanged(query));
+
+        // Optionnel: Lancer aussi les suggestions
+        context.read<SearchBloc>().add(SearchSuggestionRequested(query));
+      }
+    });
   }
 
   @override
@@ -145,6 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
+                    _debounceTimer?.cancel();
                     context.read<SearchBloc>().add(const SearchCleared());
                     setState(() {});
                   },
@@ -332,7 +353,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Use filters for advanced search',
+            'Try using the quick filters',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey[500],
             ),
