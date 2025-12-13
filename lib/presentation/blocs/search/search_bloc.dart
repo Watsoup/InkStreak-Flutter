@@ -5,6 +5,7 @@ import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/data/models/user_models.dart' as api_models;
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/core/utils/dio_client.dart';
+import 'package:inkstreak/core/utils/post_mapper.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 import 'search_filters.dart';
@@ -14,8 +15,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   List<api_models.Post> _cachedPosts = [];
   List<api_models.User> _cachedUsers = [];
 
-  SearchBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  SearchBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const SearchInitial()) {
     on<SearchQueryChanged>(_onSearchQueryChanged);
     on<SearchFiltersApplied>(_onSearchFiltersApplied);
@@ -35,10 +36,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(const SearchLoading());
 
     try {
-      // Créer des filtres avec la query
+      // Create filters with the query
       final filters = const SearchFilters().copyWith(query: event.query);
 
-      // Rechercher les posts
+      // check in posts
       final posts = await _searchPosts(filters);
 
       if (posts.isEmpty) {
@@ -92,10 +93,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       Emitter<SearchState> emit,
       ) async {
     try {
-      // Rechercher les users
+      // check first for users
       final users = await _apiService.searchUsers(event.query);
 
-      // Créer des suggestions basées sur les usernames
+      // suggestion based on usernames
       final suggestions = users.map((u) => u.username).take(5).toList();
 
       if (state is SearchLoaded) {
@@ -114,21 +115,20 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }
     } catch (e) {
       debugPrint('Suggestion error: $e');
-      // Ne pas changer l'état en cas d'erreur de suggestions
     }
   }
 
-  /// Recherche les posts selon les filtres
-  /// Utilise getAllPosts puis filtre côté client
+  /// Search for posts using filters
+  /// filtering is client sided
   Future<List<Post>> _searchPosts(SearchFilters filters) async {
-    // Récupérer tous les posts si pas en cache
+    // check for posts
     if (_cachedPosts.isEmpty) {
       _cachedPosts = await _apiService.getAllPosts();
     }
 
     var filteredPosts = _cachedPosts;
 
-    // Filtrer par username si spécifié
+    // check by username if specified
     if (filters.username != null && filters.username!.isNotEmpty) {
       filteredPosts = filteredPosts
           .where((p) => p.author.username.toLowerCase()
@@ -136,7 +136,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .toList();
     }
 
-    // Filtrer par query (caption)
+    // filter by query
     if (filters.query != null && filters.query!.isNotEmpty) {
       final query = filters.query!.toLowerCase();
       filteredPosts = filteredPosts.where((p) {
@@ -147,15 +147,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }).toList();
     }
 
-    // Filtrer par thème
+    // filter by theme
     if (filters.themeId != null && filters.themeId!.isNotEmpty) {
-      // On suppose que themeId contient le nom du thème
       filteredPosts = filteredPosts
           .where((p) => p.themeName?.toLowerCase() == filters.themeId!.toLowerCase())
           .toList();
     }
 
-    // Filtrer par date
+    // filter by date
     if (filters.startDate != null) {
       filteredPosts = filteredPosts
           .where((p) => p.createdAt.isAfter(filters.startDate!))
@@ -167,7 +166,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .toList();
     }
 
-    // Filtrer par tags
+    // Filtrer by tags
     if (filters.tags.isNotEmpty) {
       filteredPosts = filteredPosts.where((p) {
         final caption = p.caption?.toLowerCase() ?? '';
@@ -175,10 +174,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }).toList();
     }
 
-    // tri
+    // sort
     switch (filters.sortType) {
       case SearchSortType.relevance:
-      // Pas de tri particulier (ordre de l'API)
         break;
       case SearchSortType.recent:
         filteredPosts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -191,25 +189,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         break;
     }
 
-    // Convertir en UI Posts
-    return filteredPosts.map((apiPost) => _convertApiPostToUiPost(apiPost)).toList();
-  }
-
-  /// Convertir API Post en UI Post
-  Post _convertApiPostToUiPost(api_models.Post apiPost) {
-    return Post(
-      id: apiPost.id.toString(),
-      userId: apiPost.author.id.toString(),
-      username: apiPost.author.username,
-      avatarUrl: apiPost.author.profilePicture,
-      imageUrl: apiPost.picture,
-      caption: apiPost.caption,
-      theme: apiPost.themeName,
-      yeahCount: apiPost.yeahCount,
-      commentCount: apiPost.commentCount,
-      createdAt: apiPost.createdAt,
-      streakDay: apiPost.artistStreak,
-      isYeahed: false,
-    );
+    return filteredPosts.map((apiPost) => PostMapper.fromApiPost(apiPost)).toList();
   }
 }

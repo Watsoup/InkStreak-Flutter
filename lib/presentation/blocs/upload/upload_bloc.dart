@@ -16,8 +16,8 @@ import 'upload_state.dart';
 class UploadBloc extends Bloc<UploadEvent, UploadState> {
   final ApiService _apiService;
 
-  UploadBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  UploadBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const UploadInitial()) {
     on<UploadCheckStatus>(_onUploadCheckStatus);
     on<UploadImageSelected>(_onUploadImageSelected);

@@ -97,10 +97,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       body: Column(
         children: [
-          // Barre de recherche
+          // Search bar
           _buildSearchBar(),
 
-          // filtre chips
+          // filter chips
           BlocBuilder<SearchBloc, SearchState>(
             builder: (context, state) {
               if (state is SearchLoaded && state.appliedFilters.hasActiveFilters) {
@@ -110,7 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
 
-          // Résultats ou suggestions
+          // results or suggestions
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {

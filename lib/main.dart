@@ -13,6 +13,8 @@ import 'package:inkstreak/presentation/blocs/comment/comment_bloc.dart';
 import 'package:inkstreak/presentation/blocs/follow/follow_bloc.dart';
 import 'package:inkstreak/routes/app_router.dart';
 import 'package:inkstreak/core/themes/app_theme.dart';
+import 'package:inkstreak/core/di/service_locator.dart';
+import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/firebase_options.dart';
 import 'package:inkstreak/data/services/notification_service.dart';
 
@@ -22,15 +24,14 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
+  setupServiceLocator();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Register background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  // Initialize notification service
   await NotificationService().initialize();
 
   runApp(const InkStreakApp());
@@ -41,19 +42,19 @@ class InkStreakApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = AuthBloc();
+    final authBloc = AuthBloc(apiService: getIt<ApiService>());
     final appThemeBloc = AppThemeBloc()..add(const LoadThemePreference());
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => authBloc),
-        BlocProvider(create: (context) => ProfileBloc(authBloc: authBloc)),
-        BlocProvider(create: (context) => ThemeBloc()),
+        BlocProvider(create: (context) => ProfileBloc(authBloc: authBloc, apiService: getIt<ApiService>())),
+        BlocProvider(create: (context) => ThemeBloc(apiService: getIt<ApiService>())),
         BlocProvider(create: (context) => appThemeBloc),
-        BlocProvider(create: (context) => CommentBloc()),
-        BlocProvider(create: (context) => FollowBloc()),
+        BlocProvider(create: (context) => CommentBloc(apiService: getIt<ApiService>())),
+        BlocProvider(create: (context) => FollowBloc(apiService: getIt<ApiService>())),
         BlocProvider(
-          create: (context) => SearchBloc(),
+          create: (context) => SearchBloc(apiService: getIt<ApiService>()),
         ),
       ],
       child: BlocBuilder<AppThemeBloc, AppThemeState>(

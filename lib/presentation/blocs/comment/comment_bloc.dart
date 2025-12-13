@@ -10,8 +10,8 @@ import 'comment_state.dart';
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   final ApiService _apiService;
 
-  CommentBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  CommentBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const CommentInitial()) {
     on<CommentsLoadRequested>(_onCommentsLoadRequested);
     on<CommentAddRequested>(_onCommentAddRequested);
@@ -51,7 +51,6 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     CommentAddRequested event,
     Emitter<CommentState> emit,
   ) async {
-    // Get current comments list
     List<Comment> currentComments = [];
     if (state is CommentsLoaded) {
       final currentState = state as CommentsLoaded;
@@ -89,7 +88,6 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         comments: currentComments,
       ));
 
-      // Then emit error
       emit(CommentError(
         message: errorMessage,
         postId: event.postId,
@@ -103,7 +101,6 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         comments: currentComments,
       ));
 
-      // Then emit error
       emit(CommentError(
         message: 'Failed to add comment: $e',
         postId: event.postId,

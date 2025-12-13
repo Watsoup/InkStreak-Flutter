@@ -13,6 +13,7 @@ import 'package:inkstreak/presentation/blocs/theme/theme_state.dart';
 import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 import 'package:inkstreak/presentation/screens/comments/comments_bottom_sheet.dart';
+import 'package:inkstreak/core/constants/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isInPageView;
@@ -54,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   slivers: [
                     // Collapsing SliverAppBar with Theme
                     SliverAppBar(
-                      expandedHeight: 264.0,
+                      expandedHeight: AppConstants.sliverAppBarDim,
                       floating: false,
                       pinned: true,
                       snap: false,
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           // Calculate collapse progress (0.0 = expanded, 1.0 = collapsed)
                           final double top = constraints.biggest.height;
                           final double collapsedHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
-                          final double expandedHeight = 220.0;
+                          final double expandedHeight = AppConstants.sliverAppBarDimFlex;
                           final double shrinkOffset = expandedHeight - top;
                           final double collapseProgress = (shrinkOffset / (expandedHeight - collapsedHeight)).clamp(0.0, 1.0);
 

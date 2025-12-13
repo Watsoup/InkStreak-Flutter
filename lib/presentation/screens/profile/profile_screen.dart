@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inkstreak/core/di/service_locator.dart';
+import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_bloc.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
@@ -200,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 16),
                             BlocProvider(
-                              create: (context) => CalendarBloc(),
+                              create: (context) => CalendarBloc(apiService: getIt<ApiService>()),
                               child: ProfileCalendarWidget(
                                 username: user.username,
                               ),

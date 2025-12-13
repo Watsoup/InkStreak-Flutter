@@ -9,8 +9,8 @@ import 'theme_state.dart';
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   final ApiService _apiService;
 
-  ThemeBloc()
-      : _apiService = ApiService(DioClient.createDio()),
+  ThemeBloc({required ApiService apiService})
+      : _apiService = apiService,
         super(const ThemeInitial()) {
     on<ThemeLoadRequested>(_onThemeLoadRequested);
     on<ThemeRefreshRequested>(_onThemeRefreshRequested);

@@ -9,8 +9,8 @@ import 'package:inkstreak/presentation/blocs/follow/follow_event.dart';
 import 'package:inkstreak/presentation/blocs/follow/follow_state.dart';
 import 'package:inkstreak/presentation/blocs/calendar/calendar_bloc.dart';
 import 'package:inkstreak/presentation/widgets/calendar/profile_calendar_widget.dart';
+import 'package:inkstreak/core/di/service_locator.dart';
 import 'package:inkstreak/data/services/api_service.dart';
-import 'package:inkstreak/core/utils/dio_client.dart';
 import 'package:dio/dio.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  final ApiService _apiService = ApiService(DioClient.createDio());
+  final ApiService _apiService = getIt<ApiService>();
   User? _user;
   UserStats? _stats;
   bool _isLoading = true;
@@ -393,7 +393,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 const SizedBox(height: 16),
                 BlocProvider(
-                  create: (context) => CalendarBloc(),
+                  create: (context) => CalendarBloc(apiService: getIt<ApiService>()),
                   child: ProfileCalendarWidget(
                     username: widget.username,
                   ),
