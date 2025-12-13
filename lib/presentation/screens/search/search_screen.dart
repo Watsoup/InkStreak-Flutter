@@ -301,7 +301,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
         return ListTile(
-          leading: const Icon(Icons.history),
+          leading: const Icon(Icons.people_alt_outlined),
           title: Text(suggestion),
           trailing: const Icon(Icons.north_west, size: 16),
           onTap: () {
@@ -352,21 +352,30 @@ class _SearchScreenState extends State<SearchScreen> {
           avatar: const Icon(Icons.trending_up, size: 18),
           label: const Text('Popular today'),
           onPressed: () {
-            // TODO: Implement quick filter
+            final now = DateTime.now();
+            final todayStart = DateTime(now.year, now.month, now.day);
+            final todayEnd = todayStart.add(const Duration(days: 1));
+
+            final filters = SearchFilters(
+              startDate: todayStart,
+              endDate: todayEnd,
+              sortType: SearchSortType.popular,
+            );
+
+            _searchFocusNode.unfocus();
+            context.read<SearchBloc>().add(SearchFiltersApplied(filters));
           },
         ),
         ActionChip(
           avatar: const Icon(Icons.new_releases, size: 18),
           label: const Text('Recent posts'),
           onPressed: () {
-            // TODO: Implement quick filter
-          },
-        ),
-        ActionChip(
-          avatar: const Icon(Icons.palette, size: 18),
-          label: const Text('Browse themes'),
-          onPressed: () {
-            context.go('/archive');
+            final filters = SearchFilters(
+              sortType: SearchSortType.recent,
+            );
+
+            _searchFocusNode.unfocus();
+            context.read<SearchBloc>().add(SearchFiltersApplied(filters));
           },
         ),
       ],

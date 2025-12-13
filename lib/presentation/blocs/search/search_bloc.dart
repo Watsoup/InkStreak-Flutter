@@ -142,8 +142,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       filteredPosts = filteredPosts.where((p) {
         final captionMatch = p.caption?.toLowerCase().contains(query) ?? false;
         final usernameMatch = p.author.username.toLowerCase().contains(query);
-        final themeMatch = p.themeName?.toLowerCase().contains(query);
-        return captionMatch || usernameMatch || themeMatch!;
+        final themeMatch = p.themeName?.toLowerCase().contains(query) ?? false;
+        return captionMatch || usernameMatch || themeMatch;
       }).toList();
     }
 
