@@ -80,14 +80,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/feed'),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          context.go('/feed');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Search'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go('/feed'),
+          ),
         ),
-      ),
       body: Column(
         children: [
           // Barre de recherche
@@ -137,6 +144,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 
