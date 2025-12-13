@@ -16,6 +16,10 @@ class AppConstants {
   static const String baseUrl = useLocalApi ? _localBaseUrl : _productionBaseUrl;
   static const int timeoutDuration = 15;
 
+  // Colors
+  static const int filterBarAccentColor = 300; // milliseconds
+
+
   // Storage keys
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
@@ -33,4 +37,7 @@ class AppConstants {
   static const double defaultPadding = 16.0;
   static const double defaultRadius = 8.0;
   static const double defaultMargin = 16.0;
+  static const double sliverAppBarDim = 264.0;
+  static const double sliverAppBarDimFlex = 220.0;
+
 }

@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Error message
+
                     if (errorMessage != null) ...[
                       Container(
                         width: double.infinity,
@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _usernameController.text.trim().toLowerCase();
     final password = sha256.convert(utf8.encode(_passwordController.text)).toString();
 
-    // Dispatch login event
+    // Login event
     context.read<AuthBloc>().add(AuthLoginRequested(
       username: username,
       hashedPassword: password,

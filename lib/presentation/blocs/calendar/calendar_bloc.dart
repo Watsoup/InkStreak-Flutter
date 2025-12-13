@@ -31,7 +31,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     try {
       final storage = await StorageService.getInstance();
 
-      // Try to get user ID from JWT token first (most reliable)
+      // Try to get user ID from JWT token first
       final token = await storage.read(key: AppConstants.tokenKey);
       if (token != null) {
         try {
@@ -119,18 +119,15 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       // Fetch all posts
       final apiPosts = await _apiService.getAllPosts();
 
-      // Filter posts for the specific user
       final userPosts = apiPosts
           .where((post) => post.author.username == event.username)
           .toList();
 
-      // Organize posts by date (day precision)
       final Map<DateTime, List<Post>> postsByDate = {};
       final Set<DateTime> daysWithPosts = {};
       final Set<DateTime> streakDays = {};
 
       for (final apiPost in userPosts) {
-        // Normalize date to day precision (remove time component)
         final date = DateTime(
           apiPost.createdAt.year,
           apiPost.createdAt.month,
@@ -140,7 +137,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         // Convert API post to UI post
         final post = _convertApiPostToUiPost(apiPost);
 
-        // Add to posts by date
         if (!postsByDate.containsKey(date)) {
           postsByDate[date] = [];
         }
@@ -164,36 +160,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       ));
     } on DioException catch (e) {
       debugPrint('API Error loading calendar posts: ${e.message}');
-      // Fallback to mock data for demonstration
-      final mockPosts = Post.getMockPosts();
-      final Map<DateTime, List<Post>> postsByDate = {};
-      final Set<DateTime> daysWithPosts = {};
-      final Set<DateTime> streakDays = {};
-
-      for (final post in mockPosts) {
-        final date = DateTime(
-          post.createdAt.year,
-          post.createdAt.month,
-          post.createdAt.day,
-        );
-
-        if (!postsByDate.containsKey(date)) {
-          postsByDate[date] = [];
-        }
-        postsByDate[date]!.add(post);
-        daysWithPosts.add(date);
-
-        if (post.streakDay > 0) {
-          streakDays.add(date);
-        }
-      }
-
-      emit(state.copyWith(
-        status: CalendarStatus.success,
-        postsByDate: postsByDate,
-        daysWithPosts: daysWithPosts,
-        streakDays: streakDays,
-      ));
     } catch (e) {
       emit(state.copyWith(
         status: CalendarStatus.failure,

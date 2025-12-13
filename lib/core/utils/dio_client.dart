@@ -17,15 +17,6 @@ class DioClient {
       ),
     );
 
-    // Add certificate for HTTPS (if needed)
-    // Note: For production, load actual certificate bytes
-    // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
-    //   final SecurityContext context = SecurityContext();
-    //   context.setTrustedCertificatesBytes(certificateBytes);
-    //   return HttpClient(context: context);
-    // };
-
-    // Add interceptors
     dio.interceptors.addAll([
       AuthInterceptor(),
       LogInterceptor(
@@ -44,7 +35,6 @@ class DioClient {
 class AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Skip token for login and register endpoints
     if (options.path.contains('/auth/login') || options.path.contains('/auth/register')) {
       handler.next(options);
       return;
@@ -55,13 +45,10 @@ class AuthInterceptor extends Interceptor {
       final token = await storage.read(key: AppConstants.tokenKey);
 
       if (token != null) {
-        // Validate token before using it
         if (_isTokenExpired(token)) {
-          debugPrint('AuthInterceptor: Token has expired. Clearing stored credentials.');
           await storage.delete(key: AppConstants.tokenKey);
           await storage.delete(key: AppConstants.userKey);
 
-          // Reject the request with a clear error
           handler.reject(
             DioException(
               requestOptions: options,
@@ -78,9 +65,6 @@ class AuthInterceptor extends Interceptor {
         }
 
         options.headers['Authorization'] = 'Bearer $token';
-        debugPrint('AuthInterceptor: Added Authorization header to ${options.path}');
-      } else {
-        debugPrint('AuthInterceptor: No token found for ${options.path}');
       }
     } catch (e) {
       debugPrint('AuthInterceptor: Error reading token: $e');
@@ -92,13 +76,11 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      debugPrint('AuthInterceptor: 401 error received. Response: ${err.response?.data}');
       // Token expired or invalid - clear stored token
       try {
         final storage = await StorageService.getInstance();
         await storage.delete(key: AppConstants.tokenKey);
         await storage.delete(key: AppConstants.userKey);
-        debugPrint('AuthInterceptor: Cleared stored credentials due to 401 error');
       } catch (e) {
         debugPrint('AuthInterceptor: Error clearing tokens: $e');
       }

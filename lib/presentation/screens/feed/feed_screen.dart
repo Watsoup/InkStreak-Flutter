@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inkstreak/core/constants/constants.dart';
 import 'package:inkstreak/presentation/blocs/comment/comment_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
@@ -148,7 +149,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
         color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.grey[300]!,
+            color: Colors.grey[AppConstants.filterBarAccentColor]!,
             width: 1,
           ),
         ),

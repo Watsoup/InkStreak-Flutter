@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
@@ -41,19 +42,15 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       if (token != null) {
         try {
           final decodedToken = JwtDecoder.decode(token);
-          debugPrint('Decoded JWT token: $decodedToken');
 
           final userId = decodedToken['id'];
-          debugPrint('User ID from JWT: $userId (type: ${userId.runtimeType})');
 
           if (userId is int) {
             _currentUserId = userId;
-            debugPrint('SUCCESS: Loaded current user ID from JWT: $_currentUserId');
             return;
           } else if (userId is String) {
             _currentUserId = int.tryParse(userId);
             if (_currentUserId != null) {
-              debugPrint('SUCCESS: Loaded current user ID from JWT (parsed): $_currentUserId');
               return;
             }
           }
@@ -64,32 +61,19 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
       // Fallback: try to get from stored user data
       final userJson = await storage.read(key: AppConstants.userKey);
-      debugPrint('Raw user JSON from storage: $userJson');
 
       if (userJson != null) {
         final userMap = jsonDecode(userJson) as Map<String, dynamic>;
-        debugPrint('Decoded user map: $userMap');
 
         final userId = userMap['id'];
-        debugPrint('User ID from map: $userId (type: ${userId.runtimeType})');
 
         if (userId is int) {
           _currentUserId = userId;
-          debugPrint('Set _currentUserId from int: $_currentUserId');
         } else if (userId is String) {
           _currentUserId = int.tryParse(userId);
-          debugPrint('Set _currentUserId from String parse: $_currentUserId');
         } else {
           debugPrint('WARNING: userId is neither int nor String, type: ${userId.runtimeType}');
         }
-
-        if (_currentUserId == null) {
-          debugPrint('ERROR: Failed to set _currentUserId from userId: $userId');
-        } else {
-          debugPrint('SUCCESS: Loaded current user ID: $_currentUserId');
-        }
-      } else {
-        debugPrint('No user data found in storage');
       }
     } catch (e, stackTrace) {
       debugPrint('Error loading current user ID: $e');
@@ -127,10 +111,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
       emit(PostLoaded(posts: posts));
     } on DioException catch (e) {
-      // If API fails, fallback to mock data for now
       debugPrint('API Error loading posts: ${e.message}');
-      final posts = Post.getMockPosts();
-      emit(PostLoaded(posts: posts));
     } catch (e) {
       emit(PostError(message: 'Failed to load posts: $e'));
     }
@@ -163,9 +144,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       // Keep current state if refresh fails
       if (state is PostLoaded) {
         emit(state);
-      } else {
-        final posts = Post.getMockPosts();
-        emit(PostLoaded(posts: posts));
       }
     } catch (e) {
       // Keep current state if refresh fails
@@ -218,9 +196,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(PostLoaded(posts: filteredPosts));
     } on DioException catch (e) {
       debugPrint('API Error loading filtered posts: ${e.message}');
-      // Fallback to mock data
-      final posts = Post.getMockPosts();
-      emit(PostLoaded(posts: posts));
     } catch (e) {
       emit(PostError(message: 'Failed to load posts: $e'));
     }

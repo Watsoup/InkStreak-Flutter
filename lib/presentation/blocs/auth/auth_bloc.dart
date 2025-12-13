@@ -35,9 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final userJson = await storage.read(key: AppConstants.userKey);
 
       if (token != null && userJson != null) {
-        // Validate token expiry
         if (_isTokenExpired(token)) {
-          debugPrint('Token has expired. Logging out user.');
           // Clear expired token and user data
           await storage.delete(key: AppConstants.tokenKey);
           await storage.delete(key: AppConstants.userKey);
@@ -126,7 +124,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      // Save updated user to storage
       final storage = await StorageService.getInstance();
       await storage.write(
         key: AppConstants.userKey,

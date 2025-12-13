@@ -45,7 +45,6 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Column(
             children: [
-              // Month navigation
               MonthNavigationWidget(
               focusedMonth: state.focusedMonth,
               onPreviousMonth: () {
@@ -151,13 +150,13 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
 
-                    // Disabled days (future dates, days without posts)
+                    // Disabled days
                     disabledTextStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                   ),
 
-                  // Days of week style (Mon, Tue, etc.)
+                  // Days of week style
                   daysOfWeekStyle: DaysOfWeekStyle(
                     weekdayStyle: TextStyle(
                       color: theme.colorScheme.onSurface,
@@ -169,7 +168,7 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
                     ),
                   ),
 
-                  // Determine which days are enabled (only days with posts)
+                  // Determine which days are enabled
                   enabledDayPredicate: (day) {
                     final normalizedDay = DateTime(day.year, day.month, day.day);
                     return state.daysWithPosts.contains(normalizedDay);
@@ -244,7 +243,6 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
     Color? backgroundColor;
     Color? borderColor;
 
-    // Text on images is always white for visibility over the dark overlay
     textColorOnImage = Colors.white;
 
     if (isToday) {

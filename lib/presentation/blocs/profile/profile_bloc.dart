@@ -45,7 +45,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       final localUser = User.fromJson(json.decode(userJson));
 
-      // Fetch fresh data from API
+
       try {
         final apiUser = await _apiService.getUser(localUser.username);
 
@@ -89,7 +89,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileUpdating(user: currentUser));
 
     try {
-      // Upload profile picture
+
       final response = await _apiService.updateProfilePicture(event.picture);
 
       if (response.success) {
@@ -144,7 +144,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       // Only include fields that are being updated
       final request = UpdateProfileRequest(
         bio: event.bio,
-        // Don't include profilePicture field to avoid overwriting it
       );
       final response = await _apiService.updateProfile(request);
 

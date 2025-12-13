@@ -58,7 +58,7 @@ class FollowBloc extends Bloc<FollowEvent, FollowState> {
     _followStatusCache[event.username] = targetIsFollowing;
 
     try {
-      // Call API to toggle follow
+
       final response = await _apiService.followUser(event.username);
 
       if (response.success) {
@@ -70,7 +70,7 @@ class FollowBloc extends Bloc<FollowEvent, FollowState> {
         // Update cache with API response
         _followStatusCache[event.username] = apiIsFollowing;
 
-        // Use optimistic counts since API doesn't return follower arrays
+        // Use optimistic counts
         emit(FollowStatusLoaded(
           username: event.username,
           isFollowing: apiIsFollowing,
@@ -118,7 +118,6 @@ class FollowBloc extends Bloc<FollowEvent, FollowState> {
       final response = await _apiService.isFollowing(event.username);
       final isFollowing = response.isFollowing;
 
-      // Update cache
       _followStatusCache[event.username] = isFollowing;
 
       // API doesn't return follower arrays, so emit with default counts

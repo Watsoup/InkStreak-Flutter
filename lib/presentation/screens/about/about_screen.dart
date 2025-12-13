@@ -209,7 +209,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Open Source Libraries
+
                   Text(
                     'Open Source Libraries',
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -227,7 +227,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Copyright
+
                   Center(
                     child: Text(
                       '© ${DateTime.now().year} Watsoup Inc. All rights reserved.',
