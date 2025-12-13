@@ -8,6 +8,7 @@ import 'package:inkstreak/presentation/screens/main/main_navigation_screen.dart'
 import 'package:inkstreak/presentation/screens/profile/profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/edit_profile_screen.dart';
 import 'package:inkstreak/presentation/screens/profile/user_profile_screen.dart';
+import 'package:inkstreak/presentation/screens/search/search_screen.dart';
 import 'package:inkstreak/presentation/screens/settings/settings_screen.dart';
 import 'package:inkstreak/presentation/screens/about/about_screen.dart';
 import 'package:inkstreak/presentation/screens/calendar/day_posts_screen.dart';
@@ -76,6 +77,14 @@ class AppRouter {
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             child: const MainNavigationScreen(initialPage: 2),
+          ),
+        ),
+        GoRoute(
+          path: '/search',
+          name: 'search',
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const SearchScreen(),
           ),
         ),
         GoRoute(
