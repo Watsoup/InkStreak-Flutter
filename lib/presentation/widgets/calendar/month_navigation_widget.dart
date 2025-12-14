@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MonthNavigationWidget extends StatelessWidget {
   final DateTime focusedMonth;
@@ -12,13 +13,7 @@ class MonthNavigationWidget extends StatelessWidget {
     required this.onNextMonth,
   });
 
-  String _formatMonthYear(DateTime date) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return '${months[date.month - 1]} ${date.year}';
-  }
+  // Month/year formatting uses intl DateFormat for locale-aware display.
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +53,7 @@ class MonthNavigationWidget extends StatelessWidget {
 
           // Month and year display
           Text(
-            _formatMonthYear(focusedMonth),
+            DateFormat.yMMMM(Localizations.localeOf(context).toString()).format(focusedMonth),
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.onSurface,

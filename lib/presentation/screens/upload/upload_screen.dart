@@ -11,6 +11,7 @@ import 'package:inkstreak/presentation/blocs/upload/upload_state.dart';
 import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/upload/countdown_timer.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class UploadScreen extends StatefulWidget {
   final bool isInPageView;
@@ -56,7 +57,7 @@ class _UploadScreenState extends State<UploadScreen> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context).uploadFailedPickImage(e))),
         );
       }
     }
@@ -88,10 +89,10 @@ class _UploadScreenState extends State<UploadScreen> {
         },
         child: Scaffold(
           appBar: widget.isInPageView ? AppBar(
-            title: const Text('Upload Drawing'),
+            title: Text(AppLocalizations.of(context).uploadTitle),
             automaticallyImplyLeading: false,
           ) : AppBar(
-            title: const Text('Upload Drawing'),
+            title: Text(AppLocalizations.of(context).uploadTitle),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () => context.go('/home'),
@@ -157,7 +158,7 @@ class _UploadScreenState extends State<UploadScreen> {
             child: Column(
               children: [
                 Text(
-                  "Today's theme",
+                  AppLocalizations.of(context).uploadTodaysTheme,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.grey[700],
                       ),
@@ -209,7 +210,7 @@ class _UploadScreenState extends State<UploadScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Your post today",
+          AppLocalizations.of(context).uploadYourPostToday,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -229,7 +230,7 @@ class _UploadScreenState extends State<UploadScreen> {
     return Column(
       children: [
         Text(
-          "Choose how to add your drawing",
+          AppLocalizations.of(context).uploadChooseHow,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -242,7 +243,7 @@ class _UploadScreenState extends State<UploadScreen> {
               child: _buildOptionButton(
                 context,
                 icon: Icons.photo_library,
-                label: 'Gallery',
+                label: AppLocalizations.of(context).uploadGallery,
                 onTap: () => _pickImage(context, ImageSource.gallery),
               ),
             ),
@@ -251,7 +252,7 @@ class _UploadScreenState extends State<UploadScreen> {
               child: _buildOptionButton(
                 context,
                 icon: Icons.camera_alt,
-                label: 'Camera',
+                label: AppLocalizations.of(context).uploadCamera,
                 onTap: () => _pickImage(context, ImageSource.camera),
               ),
             ),

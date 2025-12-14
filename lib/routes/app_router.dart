@@ -14,6 +14,7 @@ import 'package:inkstreak/presentation/screens/about/about_screen.dart';
 import 'package:inkstreak/presentation/screens/calendar/day_posts_screen.dart';
 import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart' as auth;
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class AppRouter {
   static GoRouter createRouter(AuthBloc authBloc) {
@@ -178,18 +179,18 @@ class AppRouter {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Page not found',
+                  AppLocalizations.of(context).errorPageNotFoundTitle,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'The page you are looking for does not exist.',
+                  AppLocalizations.of(context).errorPageNotFoundMessage,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => context.go('/home'),
-                  child: const Text('Go Home'),
+                  child: Text(AppLocalizations.of(context).actionGoHome),
                 ),
               ],
             ),

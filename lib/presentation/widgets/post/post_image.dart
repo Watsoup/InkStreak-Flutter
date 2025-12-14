@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class PostImage extends StatelessWidget {
   final String imageUrl;
@@ -46,7 +47,7 @@ class PostImage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Failed to load image',
+                AppLocalizations.of(context).imageFailedLoad,
                 style: TextStyle(color: Colors.grey[600]),
               ),
             ],

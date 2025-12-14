@@ -6,6 +6,7 @@ import 'package:inkstreak/presentation/blocs/auth/auth_event.dart';
 import 'package:inkstreak/presentation/blocs/auth/auth_state.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,8 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state is AuthAuthenticated) {
               context.go('/home');
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Welcome to InkStreak!'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).authWelcomeSnack),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -61,13 +62,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Welcome to InkStreak',
+                      AppLocalizations.of(context).authWelcomeTitle,
                       style: Theme.of(context).textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Login or create an account\n(the account will be created if the username does not already exist)',
+                      AppLocalizations.of(context).authDescription,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
@@ -113,8 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _usernameController,
                       enabled: !isLoading,
                       textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        hintText: 'Username',
+                        decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context).authUsernameHint,
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -125,10 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a username';
+                          return AppLocalizations.of(context).authUsernameRequired;
                         }
                         if (value.trim().length < 3) {
-                          return 'Username must be at least 3 characters';
+                          return AppLocalizations.of(context).authUsernameMinLength;
                         }
                         return null;
                       },
@@ -143,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleLogin(),
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: AppLocalizations.of(context).authPasswordHint,
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -154,10 +155,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a password';
+                          return AppLocalizations.of(context).authPasswordRequired;
                         }
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return AppLocalizations.of(context).authPasswordMinLength;
                         }
                         return null;
                       },
@@ -175,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : const Text('Start drawing !'),
+                                : Text(AppLocalizations.of(context).authLoginButton),
                       ),
                     ),
                   ],

@@ -7,6 +7,7 @@ import 'package:inkstreak/data/models/post_models.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class PostHelper {
   static Future<void> sharePost(BuildContext context, Post post) async {
@@ -55,7 +56,7 @@ class PostHelper {
               as RenderRepaintBoundary?;
 
       if (boundary == null) {
-        throw Exception('Failed to find RepaintBoundary');
+        throw Exception(AppLocalizations.of(context).shareFailedBoundary);
       }
 
       final image = await boundary.toImage(pixelRatio: 3.0);
@@ -75,7 +76,7 @@ class PostHelper {
 
       await SharePlus.instance.share(
         ShareParams(
-          text: 'Check out this post from InkStreak!',
+          text: AppLocalizations.of(context).shareShareText,
           files: [XFile(file.path)],
         ),
       );
@@ -87,7 +88,7 @@ class PostHelper {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to share post: $e'),
+            content: Text(AppLocalizations.of(context).shareFailedShare(e)),
             backgroundColor: Colors.red,
           ),
         );

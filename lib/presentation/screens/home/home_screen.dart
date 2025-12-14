@@ -14,6 +14,7 @@ import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 import 'package:inkstreak/presentation/screens/comments/comments_bottom_sheet.dart';
 import 'package:inkstreak/core/constants/constants.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isInPageView;

@@ -10,6 +10,7 @@ import 'package:inkstreak/presentation/blocs/post/post_filters.dart';
 import 'package:inkstreak/presentation/utils/post_share_helper.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 import 'package:inkstreak/presentation/screens/comments/comments_bottom_sheet.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class FeedScreen extends StatefulWidget {
   final bool isInPageView;
@@ -63,7 +64,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
     return Scaffold(
       appBar: widget.isInPageView
           ? AppBar(
-              title: const Text('Community'),
+              title: Text(AppLocalizations.of(context).feedTitle),
               centerTitle: false,
               automaticallyImplyLeading: false,
               bottom: _buildTabBar(),
@@ -75,7 +76,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
               ],
             )
           : AppBar(
-              title: const Text('Community'),
+              title: Text(AppLocalizations.of(context).feedTitle),
               centerTitle: false,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -101,18 +102,18 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
           ? null
           : BottomNavigationBar(
               currentIndex: 2,
-              items: const [
+              items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
-                  label: 'Home',
+                  label: AppLocalizations.of(context).navHome,
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.create),
-                  label: 'Draw',
+                  label: AppLocalizations.of(context).navDraw,
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.people),
-                  label: 'Community',
+                  label: AppLocalizations.of(context).navCommunity,
                 ),
               ],
               onTap: (index) {
@@ -135,9 +136,9 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
   PreferredSizeWidget _buildTabBar() {
     return TabBar(
       controller: _tabController,
-      tabs: const [
-        Tab(text: 'Everyone'),
-        Tab(text: 'Followed'),
+      tabs: [
+        Tab(text: AppLocalizations.of(context).feedEveryone),
+        Tab(text: AppLocalizations.of(context).feedFollowed),
       ],
     );
   }
@@ -157,7 +158,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
       child: Row(
         children: [
           Text(
-            'Sort by:',
+            AppLocalizations.of(context).feedSortBy,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -168,14 +169,14 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
               value: _sortType,
               isExpanded: true,
               underline: const SizedBox(),
-              items: const [
+              items: [
                 DropdownMenuItem(
                   value: SortType.best,
-                  child: Text('Best'),
+                  child: Text(AppLocalizations.of(context).feedSortBest),
                 ),
                 DropdownMenuItem(
                   value: SortType.random,
-                  child: Text('Random'),
+                  child: Text(AppLocalizations.of(context).feedSortRandom),
                 ),
               ],
               onChanged: (value) {

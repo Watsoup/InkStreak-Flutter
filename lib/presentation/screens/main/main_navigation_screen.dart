@@ -7,6 +7,7 @@ import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_bloc.dart';
 import 'package:inkstreak/presentation/blocs/upload/upload_event.dart';
 import 'package:inkstreak/presentation/screens/home/home_screen.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 import 'package:inkstreak/presentation/screens/upload/upload_screen.dart';
 import 'package:inkstreak/presentation/screens/feed/feed_screen.dart';
 
@@ -73,18 +74,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,
         onTap: _onBottomNavTapped,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: AppLocalizations.of(context).navHome,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.create),
-            label: 'Draw',
+            icon: const Icon(Icons.create),
+            label: AppLocalizations.of(context).navDraw,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Community',
+            icon: const Icon(Icons.people),
+            label: AppLocalizations.of(context).navCommunity,
           ),
         ],
       ),

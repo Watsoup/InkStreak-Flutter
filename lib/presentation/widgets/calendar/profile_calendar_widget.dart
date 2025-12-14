@@ -7,6 +7,7 @@ import 'package:inkstreak/presentation/blocs/calendar/calendar_bloc.dart';
 import 'package:inkstreak/presentation/blocs/calendar/calendar_event.dart';
 import 'package:inkstreak/presentation/blocs/calendar/calendar_state.dart';
 import 'package:inkstreak/presentation/widgets/calendar/month_navigation_widget.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class ProfileCalendarWidget extends StatefulWidget {
   final String username;
@@ -93,7 +94,7 @@ class _ProfileCalendarWidgetState extends State<ProfileCalendarWidget> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  state.errorMessage ?? 'Failed to load calendar',
+                  state.errorMessage ?? AppLocalizations.of(context).calendarFailedLoad,
                   style: TextStyle(color: theme.colorScheme.error),
                 ),
               ),

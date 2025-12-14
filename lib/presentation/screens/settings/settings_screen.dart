@@ -10,6 +10,7 @@ import 'package:inkstreak/presentation/blocs/app_theme/app_theme_bloc.dart';
 import 'package:inkstreak/presentation/blocs/app_theme/app_theme_event.dart';
 import 'package:inkstreak/presentation/blocs/app_theme/app_theme_state.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -187,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).actionCancel),
           ),
           TextButton(
             onPressed: () async {
@@ -230,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context).actionCancel),
             ),
             TextButton(
               onPressed: () async {
@@ -312,7 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context).drawerSettings),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/home'),

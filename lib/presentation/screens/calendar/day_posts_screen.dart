@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inkstreak/data/models/post_models.dart';
+import 'package:intl/intl.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
 import 'package:inkstreak/presentation/widgets/post/post_card.dart';
@@ -16,13 +18,7 @@ class DayPostsScreen extends StatelessWidget {
     required this.posts,
   });
 
-  String _formatDate(DateTime date) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
+  // Date formatting now uses intl DateFormat in build for locale-awareness.
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +27,7 @@ class DayPostsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _formatDate(date),
+          DateFormat.yMMMMd(Localizations.localeOf(context).toString()).format(date),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -55,7 +51,7 @@ class DayPostsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No posts on this day',
+                    AppLocalizations.of(context).dayPostsNoPosts,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),

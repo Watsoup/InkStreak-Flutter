@@ -7,6 +7,7 @@ import 'package:inkstreak/presentation/blocs/comment/comment_event.dart';
 import 'package:inkstreak/presentation/blocs/comment/comment_state.dart';
 import 'package:inkstreak/presentation/blocs/post/post_bloc.dart';
 import 'package:inkstreak/presentation/blocs/post/post_event.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 import 'package:inkstreak/presentation/widgets/common/username_text.dart';
 
 class CommentsBottomSheet extends StatefulWidget {
@@ -83,7 +84,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             child: Row(
               children: [
                 Text(
-                  'Comments',
+                  AppLocalizations.of(context).commentsTitle,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -152,7 +153,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No comments yet',
+                            AppLocalizations.of(context).commentsNoComments,
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 16,
@@ -160,7 +161,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Be the first to comment!',
+                            AppLocalizations.of(context).commentsBeFirst,
                             style: TextStyle(
                               color: Colors.grey[500],
                               fontSize: 14,
@@ -197,7 +198,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Failed to load comments',
+                        AppLocalizations.of(context).commentsFailedLoad,
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 16,
@@ -210,7 +211,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                             CommentsLoadRequested(postId: widget.postId),
                           );
                         },
-                        child: const Text('Retry'),
+                        child: Text(AppLocalizations.of(context).actionRetry),
                       ),
                     ],
                   ),
@@ -316,7 +317,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   Row(
                     children: [
                       Text(
-                        'Posting...',
+                        AppLocalizations.of(context).commentsPosting,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -363,7 +364,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 controller: _commentController,
                 focusNode: _commentFocusNode,
                 decoration: InputDecoration(
-                  hintText: 'Add a comment...',
+                  hintText: AppLocalizations.of(context).commentsAddHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide(

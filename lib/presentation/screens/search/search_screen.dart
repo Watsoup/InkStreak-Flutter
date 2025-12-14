@@ -13,6 +13,7 @@ import 'package:inkstreak/presentation/widgets/post/post_card.dart';
 import '../../../data/models/post_models.dart';
 import '../../blocs/post/post_bloc.dart';
 import '../../blocs/post/post_event.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -89,7 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Search'),
+          title: Text(AppLocalizations.of(context).searchTitle),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/feed'),
@@ -168,7 +169,7 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: _searchController,
               focusNode: _searchFocusNode,
               decoration: InputDecoration(
-                hintText: 'Search posts, users, themes...',
+                hintText: AppLocalizations.of(context).searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -240,11 +241,11 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(
+            child: Row(
           children: [
-            const Text(
-              'Filters:',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            Text(
+              AppLocalizations.of(context).searchFiltersLabel,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(width: 8),
             ...chips,
@@ -256,7 +257,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 );
               },
               icon: const Icon(Icons.close, size: 16),
-              label: const Text('Clear all'),
+              label: Text(AppLocalizations.of(context).searchClearAll),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
@@ -347,14 +348,14 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Search for posts, users, or themes',
+            AppLocalizations.of(context).searchInitialIntro,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.grey[600],
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Try using the quick filters',
+            AppLocalizations.of(context).searchTryQuickFilters,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey[500],
             ),
@@ -372,7 +373,7 @@ class _SearchScreenState extends State<SearchScreen> {
       children: [
         ActionChip(
           avatar: const Icon(Icons.trending_up, size: 18),
-          label: const Text('Popular today'),
+          label: Text(AppLocalizations.of(context).searchPopularToday),
           onPressed: () {
             final now = DateTime.now();
             final todayStart = DateTime(now.year, now.month, now.day);
@@ -390,7 +391,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         ActionChip(
           avatar: const Icon(Icons.new_releases, size: 18),
-          label: const Text('Recent posts'),
+          label: Text(AppLocalizations.of(context).searchRecentPosts),
           onPressed: () {
             final filters = SearchFilters(
               sortType: SearchSortType.recent,
@@ -424,7 +425,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Try adjusting your filters or search terms',
+            AppLocalizations.of(context).searchTryAdjustFilters,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey[500],
             ),
@@ -437,7 +438,7 @@ class _SearchScreenState extends State<SearchScreen> {
               );
             },
             icon: const Icon(Icons.filter_alt_off),
-            label: const Text('Clear filters'),
+            label: Text(AppLocalizations.of(context).searchClearFilters),
           ),
         ],
       ),
@@ -492,10 +493,10 @@ class _SearchScreenState extends State<SearchScreen> {
         itemCount: posts.length + 1, // +1 for results count header
         itemBuilder: (context, index) {
           if (index == 0) {
-            return Padding(
+                return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(
-                '${posts.length} result${posts.length != 1 ? 's' : ''} found',
+                AppLocalizations.of(context).searchResultsFound(posts.length),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
