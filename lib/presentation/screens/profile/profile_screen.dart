@@ -11,6 +11,7 @@ import 'package:inkstreak/presentation/blocs/profile/profile_event.dart';
 import 'package:inkstreak/presentation/blocs/profile/profile_state.dart';
 import 'package:inkstreak/presentation/blocs/calendar/calendar_bloc.dart';
 import 'package:inkstreak/presentation/widgets/calendar/profile_calendar_widget.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(AppLocalizations.of(context).profileTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/home'),
@@ -56,8 +57,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final user = state is AuthAuthenticated ? state.user : null;
 
             if (user == null) {
-              return const Center(
-                child: Text('No user logged in'),
+              return Center(
+                child: Text(AppLocalizations.of(context).profileNoUser),
               );
             }
 
@@ -120,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                             const SizedBox(height: 8),
                             Text(
-                              'Member since ${_formatDate(user.createdAt)}',
+                              AppLocalizations.of(context).profileMemberSince(_formatDate(user.createdAt)),
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Colors.grey[600],
                                   ),
@@ -136,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Statistics',
+                              AppLocalizations.of(context).profileStatistics,
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -148,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: _buildStatCard(
                                     context,
                                     icon: Icons.local_fire_department,
-                                    label: 'Current Streak',
+                                    label: AppLocalizations.of(context).statsCurrentStreak,
                                     value: stats?.currentStreak.toString(),
                                     isLoading: isLoading,
                                     color: Colors.orange,
@@ -159,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: _buildStatCard(
                                     context,
                                     icon: Icons.star,
-                                    label: 'Max Streak',
+                                    label: AppLocalizations.of(context).statsMaxStreak,
                                     value: stats?.maxStreak.toString(),
                                     isLoading: isLoading,
                                     color: Colors.amber,
@@ -174,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: _buildStatCard(
                                     context,
                                     icon: Icons.brush,
-                                    label: 'Total Drawings',
+                                    label: AppLocalizations.of(context).statsTotalDrawings,
                                     value: stats?.totalPosts.toString(),
                                     isLoading: isLoading,
                                     color: Colors.blue,
@@ -185,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: _buildStatCard(
                                     context,
                                     icon: Icons.thumb_up,
-                                    label: 'Total Yeahs',
+                                    label: AppLocalizations.of(context).statsTotalYeahs,
                                     value: stats?.totalYeahs.toString(),
                                     isLoading: isLoading,
                                     color: Colors.green,
@@ -195,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              'Calendar',
+                              AppLocalizations.of(context).profileCalendar,
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -290,19 +291,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Are you sure you want to logout?'),
+          title: Text(AppLocalizations.of(context).logoutTitle),
+          content: Text(AppLocalizations.of(context).logoutConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context).actionCancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 context.read<AuthBloc>().add(const AuthLogoutRequested());
               },
-              child: const Text('Logout'),
+              child: Text(AppLocalizations.of(context).actionLogout),
             ),
           ],
         );

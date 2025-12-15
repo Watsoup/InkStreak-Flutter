@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inkstreak/presentation/widgets/common/username_text.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class PostFooter extends StatelessWidget {
   final String? caption;
@@ -30,7 +31,7 @@ class PostFooter extends StatelessWidget {
           ],
           if (caption == null || caption!.isEmpty)
             Text(
-              'No caption',
+              AppLocalizations.of(context).postNoCaption,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[500],
                     fontStyle: FontStyle.italic,

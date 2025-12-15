@@ -16,6 +16,8 @@ import 'package:inkstreak/core/themes/app_theme.dart';
 import 'package:inkstreak/core/di/service_locator.dart';
 import 'package:inkstreak/data/services/api_service.dart';
 import 'package:inkstreak/firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 import 'package:inkstreak/data/services/notification_service.dart';
 
 // Global navigator key for navigation from notification service
@@ -61,8 +63,15 @@ class InkStreakApp extends StatelessWidget {
         buildWhen: (previous, current) => previous.isDarkMode != current.isDarkMode,
         builder: (context, themeState) {
           return MaterialApp.router(
-            title: 'InkStreak',
+            onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
             debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeState.isDarkMode ? ThemeMode.dark : ThemeMode.light,

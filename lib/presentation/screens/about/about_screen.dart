@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -31,7 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text(AppLocalizations.of(context).aboutTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -82,7 +83,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'InkStreak',
+                    AppLocalizations.of(context).appTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -105,16 +106,14 @@ class _AboutScreenState extends State<AboutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'About InkStreak',
+                    AppLocalizations.of(context).aboutTitle,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'InkStreak is a creative community app that encourages daily drawing practice. '
-                    'Share your artwork, build streaks, connect with fellow artists, and watch your '
-                    'creativity flourish one drawing at a time.',
+                    AppLocalizations.of(context).aboutDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       height: 1.5,
                     ),
@@ -124,7 +123,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
                   // Features Section
                   Text(
-                    'Features',
+                    AppLocalizations.of(context).aboutFeatures,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -133,39 +132,39 @@ class _AboutScreenState extends State<AboutScreen> {
                   _buildFeatureItem(
                     context,
                     icon: Icons.calendar_today,
-                    title: 'Daily Streaks',
-                    description: 'Track your drawing consistency and build streaks',
+                    title: AppLocalizations.of(context).aboutFeatureDailyStreaksTitle,
+                    description: AppLocalizations.of(context).aboutFeatureDailyStreaksDesc,
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.people,
-                    title: 'Artist Community',
-                    description: 'Connect with artists and share your work',
+                    title: AppLocalizations.of(context).aboutFeatureCommunityTitle,
+                    description: AppLocalizations.of(context).aboutFeatureCommunityDesc,
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.thumb_up,
-                    title: 'Engagement',
-                    description: 'Give and receive "Yeahs" to support fellow artists',
+                    title: AppLocalizations.of(context).aboutFeatureEngagementTitle,
+                    description: AppLocalizations.of(context).aboutFeatureEngagementDesc,
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.chat_bubble,
-                    title: 'Conversations',
-                    description: 'Chat with other artists and get feedback',
+                    title: AppLocalizations.of(context).aboutFeatureConversationsTitle,
+                    description: AppLocalizations.of(context).aboutFeatureConversationsDesc,
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.view_timeline,
-                    title: 'Calendar View',
-                    description: 'Browse your artwork history with visual previews',
+                    title: AppLocalizations.of(context).aboutFeatureCalendarTitle,
+                    description: AppLocalizations.of(context).aboutFeatureCalendarDesc,
                   ),
 
                   const SizedBox(height: 32),
 
                   // Developer Info
                   Text(
-                    'Development',
+                    AppLocalizations.of(context).aboutDevelopment,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -173,19 +172,19 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(height: 12),
                   _buildInfoCard(
                     context,
-                    title: 'Developed by',
+                    title: AppLocalizations.of(context).aboutDevelopedBy,
                     content: 'Watsoup Inc.',
                   ),
                   const SizedBox(height: 8),
                   _buildInfoCard(
                     context,
-                    title: 'Platform',
+                    title: AppLocalizations.of(context).aboutPlatform,
                     content: 'Flutter',
                   ),
                   const SizedBox(height: 8),
                   _buildInfoCard(
                     context,
-                    title: 'License',
+                    title: AppLocalizations.of(context).aboutLicense,
                     content: 'Proprietary',
                   ),
 
@@ -193,7 +192,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
                   // Credits
                   Text(
-                    'Credits',
+                    AppLocalizations.of(context).aboutCredits,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -211,7 +210,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
 
                   Text(
-                    'Open Source Libraries',
+                    AppLocalizations.of(context).aboutLibraries,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

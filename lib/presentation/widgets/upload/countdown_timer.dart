@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:inkstreak/l10n/app_localizations.dart';
 
 class CountdownTimer extends StatefulWidget {
   final Duration duration;
@@ -71,11 +72,11 @@ class _CountdownTimerState extends State<CountdownTimer>
     }
   }
 
-  String get _statusText {
+  String _statusText(BuildContext context) {
     if (widget.hasPostedToday) {
-      return 'Posted today ✓';
+      return AppLocalizations.of(context).countdownPostedToday;
     } else {
-      return 'Not posted yet';
+      return AppLocalizations.of(context).countdownNotPostedYet;
     }
   }
 
@@ -126,7 +127,7 @@ class _CountdownTimerState extends State<CountdownTimer>
               ),
               const SizedBox(width: 8),
               Text(
-                _statusText,
+                _statusText(context),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: _statusColor,
@@ -138,7 +139,7 @@ class _CountdownTimerState extends State<CountdownTimer>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                'Next theme in:',
+                AppLocalizations.of(context).countdownNextThemeIn,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                     ),
